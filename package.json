@@ -1,0 +1,28 @@
+{
+  "name": "seen-o-phile",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.16.3"
+  },
+  "devDependencies": {
+    "mocha": "^5.2.0",
+    "chai-http": "^4.2.0",
+    "chai": "^4.1.2"
+  },
+  "scripts": {
+    "test": "mocha",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rcaseyx/seen-o-phile.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rcaseyx/seen-o-phile/issues"
+  },
+  "homepage": "https://github.com/rcaseyx/seen-o-phile#readme"
+}
