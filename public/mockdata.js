@@ -1,5 +1,5 @@
 const MOCK_DEFAULT_LISTS = {
-  "defaultLists": [
+  "lists": [
     {
       "id": "111",
       "title": "IMdB Top Fake Movies",
