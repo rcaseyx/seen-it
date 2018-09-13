@@ -97,6 +97,7 @@ const MOCK_USERS = {
     {
       "id": "1u",
       "userName": "demo.user",
+      "password": "demo123",
       "firstName": "Demo",
       "lastName": "User",
       "lists": ["111","222"],
@@ -105,6 +106,7 @@ const MOCK_USERS = {
     {
       "id": "2u",
       "userName": "demo2",
+      "password": "demo123",
       "firstName": "Second",
       "lastName": "Demo",
       "lists": ["111","222","333","444"],
@@ -113,6 +115,7 @@ const MOCK_USERS = {
     {
       "id": "3u",
       "userName": "3demo",
+      "password": "demo123",
       "firstName": "Third",
       "lastName": "Demo",
       "lists": ["333","444"],
@@ -121,6 +124,7 @@ const MOCK_USERS = {
     {
       "id": "4u",
       "userName": "last.demo",
+      "password": "demo123",
       "firstName": "Last",
       "lastName": "Demo",
       "lists": [],

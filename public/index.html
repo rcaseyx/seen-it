@@ -11,11 +11,26 @@
     </header>
     <main>
       <section>
-        Seen-O-Phile is an interactive application allowing users to view lists of the best movies ever made, add those lists to their accounts, and check off movies as they watch them. Start your cinematic journey today by clicking below!
+        Seen-O-Phile is an interactive application allowing users to view lists of the best movies ever made, add those lists to their accounts, and check off movies as they watch them. Start your cinematic journey today by logging in below!
       </section>
       <section>
-        <a href="defaultLists.html"><button>View Lists</button></a>
+        <form class="login-form">
+          <fieldset>
+            <legend>Login</legend>
+            <label for="uname">User Name:
+              <input type="text" id="uname" placeholder="demo.user" required>
+            </label>
+            <label for="password">Password:
+              <input type="password" id="password"  placeholder="demo123" required>
+            </label>
+            <input type="submit" class="submit-login">
+          </fieldset>
+        </form>
+        <div class="message"></div>
       </section>
     </main>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+    <script type="text/javascript" src="mockdata.js"></script>
   </body>
 </html>
