@@ -89,9 +89,14 @@ function getAllLists() {
 }
 
 function displayAllLists(data) {
-  data.forEach(function(list) {
-    $('.allLists').append(`<li>${list.title} - <a href="#" id="${list.id}">Add List</a></li>`);
-  });
+  if(data.length > 0) {
+    data.forEach(function(list) {
+      $('.allLists').append(`<li>${list.title} - <a href="#" id="${list.id}">Add List</a></li>`);
+    });
+  }
+  else {
+    $('.availableLists').html('');
+  }
 }
 
 function handleAddList() {
@@ -111,6 +116,7 @@ function handleViewList() {
       return list.id === listId;
     });
 
+    let listTitle = list.title;
     let movieIds = list.movies;
     let movies = [];
 
@@ -121,12 +127,14 @@ function handleViewList() {
       movies.push(movie);
     });
 
-    displayListDetail(movies);
+    displayListDetail(listTitle,movies);
 
   });
 }
 
-function displayListDetail(data) {
+function displayListDetail(title,data) {
+  $('.listTitle').html('');
+  $('.listTitle').append(`<h3>${title}</h3>`);
   $('.listDetail').html('');
   data.forEach(function(movie) {
     $('.listDetail').append(`<div class="movie">${movie.title} <img src="${movie.posterImage}" alt="${movie.title} poster"></div>`);
