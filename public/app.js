@@ -59,7 +59,7 @@ function getListData(user, callback) {
 
 function displayListData(data) {
   data.forEach(function(list) {
-    $('.lists').append(`<li>${list.title}</li>`);
+    $('.lists').append(`<li>${list.title} - <a href="#" id="${list.id}">View</a></li>`);
   });
 }
 
@@ -95,12 +95,41 @@ function displayAllLists(data) {
 }
 
 function handleAddList() {
-  $('.allLists').on('click','a', function() {
+  $('.allLists').on('click', 'a', function() {
     const listId = $(this).attr('id');
     user.lists.push(listId);
     $('.lists').html('');
     $('.allLists').html('');
     login(user);
+  });
+}
+
+function handleViewList() {
+  $('.lists').on('click', 'a', function() {
+    const listId = $(this).attr('id');
+    const list = MOCK_DEFAULT_LISTS.lists.find(function(list) {
+      return list.id === listId;
+    });
+
+    let movieIds = list.movies;
+    let movies = [];
+
+    movieIds.forEach(function(movieId) {
+      let movie = MOCK_MOVIES.movies.find(function(movie) {
+        return movie.id === movieId;
+      });
+      movies.push(movie);
+    });
+
+    displayListDetail(movies);
+
+  });
+}
+
+function displayListDetail(data) {
+  $('.listDetail').html('');
+  data.forEach(function(movie) {
+    $('.listDetail').append(`<div class="movie">${movie.title} <img src="${movie.posterImage}" alt="${movie.title} poster"></div>`);
   });
 }
 
@@ -113,6 +142,7 @@ function handleAddList() {
 function handleApp() {
   handleLogin();
   handleAddList();
+  handleViewList();
 }
 
 $(handleApp);
