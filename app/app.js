@@ -18,7 +18,6 @@ function handleLogin() {
       if(checkUser.password === password) {
         console.log('success');
         user = checkUser;
-        console.log(user);
         login(user);
       }
       else {
@@ -82,7 +81,9 @@ function getAllLists() {
 
   listsToRemove.forEach(function(remove) {
     let index = allLists.indexOf(remove);
-    allLists.splice(index, 1);
+    if(index > -1) {
+      allLists.splice(index, 1);
+    }
   });
 
   return allLists;
@@ -112,32 +113,71 @@ function handleAddList() {
 function handleViewList() {
   $('.lists').on('click', 'a', function() {
     const listId = $(this).attr('id');
-    const list = MOCK_DEFAULT_LISTS.lists.find(function(list) {
-      return list.id === listId;
-    });
+    console.log(user.moviesSeen);
 
-    let listTitle = list.title;
-    let movieIds = list.movies;
-    let movies = [];
-
-    movieIds.forEach(function(movieId) {
-      let movie = MOCK_MOVIES.movies.find(function(movie) {
-        return movie.id === movieId;
-      });
-      movies.push(movie);
-    });
-
-    displayListDetail(listTitle,movies);
+    generateListDetail(listId);
 
   });
 }
 
-function displayListDetail(title,data) {
+function generateListDetail(listId) {
+  const list = MOCK_DEFAULT_LISTS.lists.find(function(list) {
+    return list.id === listId;
+  });
+
+  let listTitle = list.title;
+  let movieIds = [];
+  let seenMovieIds = [];
+
+  for(let i = 0;i < list.movies.length;i ++) {
+    if(user.moviesSeen.includes(list.movies[i])) {
+      seenMovieIds.push(list.movies[i]);
+    }
+    else {
+      movieIds.push(list.movies[i]);
+    }
+  }
+
+  let movies = [];
+  let seenMovies = [];
+
+  movieIds.forEach(function(movieId) {
+    let movie = MOCK_MOVIES.movies.find(function(movie) {
+      return movie.id === movieId;
+    });
+    movies.push(movie);
+  });
+
+  seenMovieIds.forEach(function(movieId) {
+    let movie = MOCK_MOVIES.movies.find(function(movie) {
+      return movie.id === movieId;
+    });
+    seenMovies.push(movie);
+  });
+
+  displayListDetail(listTitle,movies,seenMovies,listId);
+}
+
+function displayListDetail(title,data,seenData,listId) {
   $('.listTitle').html('');
   $('.listTitle').append(`<h3>${title}</h3>`);
   $('.listDetail').html('');
   data.forEach(function(movie) {
-    $('.listDetail').append(`<div class="movie">${movie.title} <img src="${movie.posterImage}" alt="${movie.title} poster"></div>`);
+    $('.listDetail').append(`<div class="movie" id="${movie.id}">${movie.title} <img src="${movie.posterImage}" alt="${movie.title} poster"><button class="seen" id="${listId}">Seen It</button></div>`);
+  });
+  $('.listDetailSeen').html('');
+  seenData.forEach(function(movie) {
+    $('.listDetailSeen').append(`<div class="movie" id="${movie.id}"><del>${movie.title}</del> <img src="${movie.posterImage}" alt="${movie.title} poster"></div>`);
+  });
+}
+
+function handleSeenIt() {
+  $('.listDetail').on('click','.seen',function() {
+    let listId = $(this).attr('id');
+    let movieId = $(this).closest('div').attr('id');
+    user.moviesSeen.push(movieId);
+
+    generateListDetail(listId);
   });
 }
 
@@ -151,6 +191,7 @@ function handleApp() {
   handleLogin();
   handleAddList();
   handleViewList();
+  handleSeenIt();
 }
 
 $(handleApp);
