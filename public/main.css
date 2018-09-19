@@ -48,3 +48,7 @@ form, input {
 .movie img {
   width: 20%;
 }
+
+.userProfile {
+  float: right;
+}

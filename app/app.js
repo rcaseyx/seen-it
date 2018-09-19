@@ -36,15 +36,18 @@ function handleLogin() {
 
 function login(user) {
   clearLogin();
-  $('.logout').prop('hidden',false);
-  $('.logoutButton').prop('hidden',false);
   $('.lists').prop('hidden',false);
   $('.your').html('');
   $('.all').html('');
+  $('.title').html('');
+  $('.detail').html('');
+  $('.detailSeen').html('');
   getListData(user, displayListData);
   let data = getAllLists();
   displayAllLists(data);
-  $('.seen').html(`<button>View Seen Data</button>`)
+  $('.seen').html(`<button>View Seen Data</button>`);
+  $('.userProfile').html('');
+  $('.userProfile').html(`Logged in as ${user.firstName} |  <a href="#" class="profile">View Profile</a>  |   <a href="#" class="logout">Logout</a>`);
 }
 
 function getListData(user, callback) {
@@ -207,7 +210,7 @@ function clearLogin() {
 }
 
 function handleLogout() {
-  $('.logoutButton').click(function() {
+  $('.userProfile').on('click', '.logout', function() {
     logout();
     reloadLogin();
   });
@@ -262,6 +265,12 @@ function generateSeenData(user) {
   });
 }
 
+function handleViewProfile() {
+  $('.userProfile').on('click', '.profile', function() {
+    login(user);
+  });
+}
+
 
 
 
@@ -275,6 +284,7 @@ function handleApp() {
   handleRemoveList();
   handleLogout();
   handleViewSeen();
+  handleViewProfile();
 }
 
 $(handleApp);
