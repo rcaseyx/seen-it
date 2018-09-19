@@ -42,6 +42,10 @@ function login(user) {
   $('.title').html('');
   $('.detail').html('');
   $('.detailSeen').html('');
+  $('.message').html('');
+  $('.message').prop('hidden',true);
+  $('.seenData').html('');
+  $('.seenData').prop('hidden',true);
   getListData(user, displayListData);
   let data = getAllLists();
   displayAllLists(data);
@@ -226,8 +230,8 @@ function logout() {
   $('.seenData').html('');
   $('.lists').prop('hidden',true);
   $('.list').prop('hidden',true);
-  $('.logout').prop('hidden',true);
-  $('.logoutButton').prop('hidden',true);
+  $('.userProfile').html('');
+  $('.userProfile').prop('hidden',true);
   $('.seenData').prop('hidden',true);
 }
 
