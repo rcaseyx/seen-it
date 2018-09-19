@@ -36,6 +36,8 @@ function handleLogin() {
 
 function login(user) {
   clearLogin();
+  $('.logout').prop('hidden',false);
+  $('.logoutButton').prop('hidden',false);
   $('.lists').prop('hidden',false);
   $('.your').html('');
   $('.all').html('');
@@ -199,7 +201,36 @@ function clearLogin() {
   $('.intro').prop('hidden',true);
   $('.intro').html('');
   $('.login').prop('hidden',true);
-  $('.login').html('');
+  $('.login-form').prop('hidden',true);
+  $('.login-form fieldset').prop('hidden',true);
+}
+
+function handleLogout() {
+  $('.logoutButton').click(function() {
+    logout();
+    reloadLogin();
+  });
+}
+
+function logout() {
+  user = false;
+  $('.your').html('');
+  $('.all').html('');
+  $('.title').html('');
+  $('.detail').html('');
+  $('.detailSeen').html('');
+  $('.lists').prop('hidden',true);
+  $('.list').prop('hidden',true);
+  $('.logout').prop('hidden',true);
+  $('.logoutButton').prop('hidden',true);
+}
+
+function reloadLogin() {
+  $('.intro').prop('hidden',false);
+  $('.intro').html('<p>Seen-O-Phile is an interactive application allowing users to view lists of the best movies ever made, add those lists to their accounts, and check off movies as they watch them. Start your cinematic journey today by logging in below!</p>');
+  $('.login').prop('hidden',false);
+  $('.login-form').prop('hidden',false);
+  $('.login-form fieldset').prop('hidden',false);
 }
 
 
@@ -214,6 +245,7 @@ function handleApp() {
   handleViewList();
   handleSeenIt();
   handleRemoveList();
+  handleLogout();
 }
 
 $(handleApp);
