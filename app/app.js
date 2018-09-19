@@ -44,6 +44,7 @@ function login(user) {
   getListData(user, displayListData);
   let data = getAllLists();
   displayAllLists(data);
+  $('.seen').html(`<button>View Seen Data</button>`)
 }
 
 function getListData(user, callback) {
@@ -219,10 +220,12 @@ function logout() {
   $('.title').html('');
   $('.detail').html('');
   $('.detailSeen').html('');
+  $('.seenData').html('');
   $('.lists').prop('hidden',true);
   $('.list').prop('hidden',true);
   $('.logout').prop('hidden',true);
   $('.logoutButton').prop('hidden',true);
+  $('.seenData').prop('hidden',true);
 }
 
 function reloadLogin() {
@@ -233,6 +236,31 @@ function reloadLogin() {
   $('.login-form fieldset').prop('hidden',false);
 }
 
+function handleViewSeen() {
+  $('.seen').on('click','button', function() {
+    $('.lists').prop('hidden',true);
+    $('.seenData').prop('hidden',false);
+    $('.seenData').html('');
+    let html = generateSeenData(user);
+    $('.seenData').html(html);
+  });
+}
+
+function generateSeenData(user) {
+  let seenIds = user.moviesSeen;
+  let seenMovies = [];
+
+  seenIds.forEach(function(movieId) {
+    let movie = MOCK_MOVIES.movies.find(function(movie) {
+      return movie.id === movieId;
+    });
+    seenMovies.push(movie);
+  });
+
+  seenMovies.forEach(function(movie) {
+    $('.seenData').append(`<div class="movie" id="${movie.id}">${movie.title} <img src="${movie.posterImage}" alt="${movie.title} poster"></div>`);
+  });
+}
 
 
 
@@ -246,6 +274,7 @@ function handleApp() {
   handleSeenIt();
   handleRemoveList();
   handleLogout();
+  handleViewSeen();
 }
 
 $(handleApp);
