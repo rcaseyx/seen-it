@@ -6,6 +6,8 @@ function handleLogin() {
     e.preventDefault();
     const uname = $('#uname').val();
     const password = $('#password').val();
+    $('#uname').val('');
+    $('#password').val('');
     const checkUser = MOCK_USERS.users.find(function(obj) {
       if(obj.userName === uname) {
         return obj;
@@ -33,7 +35,10 @@ function handleLogin() {
 }
 
 function login(user) {
-  //window.location.href = "defaultLists.html";
+  clearLogin();
+  $('.lists').prop('hidden',false);
+  $('.your').html('');
+  $('.all').html('');
   getListData(user, displayListData);
   let data = getAllLists();
   displayAllLists(data);
@@ -52,13 +57,13 @@ function getListData(user, callback) {
     callback(lists);
   }
   else {
-    $('.lists').append('No lists found');
+    $('.your').append('No lists found');
   }
 }
 
 function displayListData(data) {
   data.forEach(function(list) {
-    $('.lists').append(`<li>${list.title} - <a href="#" id="${list.id}">View</a></li>`);
+    $('.your').append(`<li>${list.title} - <div id="${list.id}"><a href="#" class="view">View</a> <a href="#" class="remove">Remove</a></div></li>`);
   });
 }
 
@@ -91,32 +96,41 @@ function getAllLists() {
 
 function displayAllLists(data) {
   if(data.length > 0) {
+    $('.available').prop('hidden',false);
     data.forEach(function(list) {
-      $('.allLists').append(`<li>${list.title} - <a href="#" id="${list.id}">Add List</a></li>`);
+      $('.all').append(`<li>${list.title} - <a href="#" id="${list.id}">Add List</a></li>`);
     });
   }
   else {
-    $('.availableLists').html('');
+    $('.available').prop('hidden',true);
   }
 }
 
 function handleAddList() {
-  $('.allLists').on('click', 'a', function() {
+  $('.all').on('click', 'a', function() {
     const listId = $(this).attr('id');
     user.lists.push(listId);
-    $('.lists').html('');
-    $('.allLists').html('');
     login(user);
   });
 }
 
 function handleViewList() {
-  $('.lists').on('click', 'a', function() {
-    const listId = $(this).attr('id');
-    console.log(user.moviesSeen);
+  $('.your').on('click', '.view', function() {
+    const listId = $(this).closest('div').attr('id');
+    $('.lists').prop('hidden',true);
+    $('.list').prop('hidden',false);
 
     generateListDetail(listId);
 
+  });
+}
+
+function handleRemoveList() {
+  $('.your').on('click','.remove', function() {
+    const listId = $(this).closest('div').attr('id');
+    let index = user.lists.indexOf(listId);
+    user.lists.splice(index, 1);
+    login(user);
   });
 }
 
@@ -159,26 +173,33 @@ function generateListDetail(listId) {
 }
 
 function displayListDetail(title,data,seenData,listId) {
-  $('.listTitle').html('');
-  $('.listTitle').append(`<h3>${title}</h3>`);
-  $('.listDetail').html('');
+  $('.title').html('');
+  $('.title').append(`<h3>${title}</h3>`);
+  $('.detail').html('');
   data.forEach(function(movie) {
-    $('.listDetail').append(`<div class="movie" id="${movie.id}">${movie.title} <img src="${movie.posterImage}" alt="${movie.title} poster"><button class="seen" id="${listId}">Seen It</button></div>`);
+    $('.detail').append(`<div class="movie" id="${movie.id}">${movie.title} <img src="${movie.posterImage}" alt="${movie.title} poster"><button class="seen" id="${listId}">Seen It</button></div>`);
   });
-  $('.listDetailSeen').html('');
+  $('.detailSeen').html('');
   seenData.forEach(function(movie) {
-    $('.listDetailSeen').append(`<div class="movie" id="${movie.id}"><del>${movie.title}</del> <img src="${movie.posterImage}" alt="${movie.title} poster"></div>`);
+    $('.detailSeen').append(`<div class="movie" id="${movie.id}"><del>${movie.title}</del> <img src="${movie.posterImage}" alt="${movie.title} poster"></div>`);
   });
 }
 
 function handleSeenIt() {
-  $('.listDetail').on('click','.seen',function() {
+  $('.detail').on('click','.seen',function() {
     let listId = $(this).attr('id');
     let movieId = $(this).closest('div').attr('id');
     user.moviesSeen.push(movieId);
 
     generateListDetail(listId);
   });
+}
+
+function clearLogin() {
+  $('.intro').prop('hidden',true);
+  $('.intro').html('');
+  $('.login').prop('hidden',true);
+  $('.login').html('');
 }
 
 
@@ -192,6 +213,7 @@ function handleApp() {
   handleAddList();
   handleViewList();
   handleSeenIt();
+  handleRemoveList();
 }
 
 $(handleApp);
