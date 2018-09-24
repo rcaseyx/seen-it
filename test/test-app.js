@@ -24,13 +24,4 @@ describe('Seen-O-Phile', function() {
         expect(res).to.be.html;
       });
   });
-
-  it('should return 200 on defaultLists page', function() {
-    return chai.request(app)
-      .get('/defaultLists.html')
-      .then(function(res) {
-        expect(res).to.have.status(200);
-        expect(res).to.be.html;
-      });
-  });
 });
