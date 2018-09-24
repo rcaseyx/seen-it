@@ -12,13 +12,13 @@ const userSchema = mongoose.Schema({
   firstName: String,
   lastName: String,
   email: String,
-  lists: [{ type: ObjectId, ref: 'List' }],
-  moviesSeen: [{ type: ObjectId, ref: 'Movie' }]
+  lists: [{ type: mongoose.Schema.Types.ObjectId, ref: 'List' }],
+  moviesSeen: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }]
 });
 
 const listSchema = mongoose.Schema({
   title: String,
-  movies: [{ type: ObjectId, ref: 'Movie' }]
+  movies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }]
 });
 
 const movieSchema = mongoose.Schema({
