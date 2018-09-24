@@ -16,7 +16,7 @@ describe('Seen-O-Phile', function() {
     return closeServer();
   });
 
-  it('should return 200', function() {
+  it('should return 200 on index page', function() {
     return chai.request(app)
       .get('/')
       .then(function(res) {
