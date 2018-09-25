@@ -17,10 +17,6 @@ describe('Seen-O-Phile', function() {
     return runServer(DATABASE_URL);
   });
 
-  after(function() {
-    return closeServer();
-  });
-
   it('should return 200 on index page', function() {
     return chai.request(app)
       .get('/')
@@ -28,5 +24,9 @@ describe('Seen-O-Phile', function() {
         expect(res).to.have.status(200);
         expect(res).to.be.html;
       });
+  });
+
+  after(function() {
+    return closeServer();
   });
 });
