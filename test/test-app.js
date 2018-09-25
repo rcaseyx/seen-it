@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 
 const { app, runServer, closeServer } = require('../server');
 const { User, List, Movie } = require('../models');
-const {DATABASE_URL} = require('../config');
+const {TEST_DATABASE_URL} = require('../config');
 
 const expect = chai.expect;
 
@@ -14,7 +14,7 @@ chai.use(chaiHttp);
 
 describe('Seen-O-Phile', function() {
   before(function() {
-    return runServer(DATABASE_URL);
+    return runServer(TEST_DATABASE_URL);
   });
 
   after(function() {
