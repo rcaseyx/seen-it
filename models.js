@@ -3,6 +3,17 @@
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
+const movieSchema = mongoose.Schema({
+  title: String,
+  releaseYear: String,
+  image: String
+});
+
+const listSchema = mongoose.Schema({
+  title: String,
+  movies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }]
+});
+
 const userSchema = mongoose.Schema({
   userName: {
     type: String,
@@ -16,16 +27,24 @@ const userSchema = mongoose.Schema({
   moviesSeen: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }]
 });
 
-const listSchema = mongoose.Schema({
-  title: String,
-  movies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }]
+listSchema.virtual('movieTitles').get(function() {
+  for(let i = 0;i < this.movies.length;i ++) {
+    if(i < (this.movies.length - 1)) {
+      return `${this.movies[i].title}`;
+    }
+    else {
+      return `${this.movies[i].title}, `;
+    }
+  }
 });
 
-const movieSchema = mongoose.Schema({
-  title: String,
-  releaseYear: String,
-  image: String
-});
+listSchema.methods.serialize = function() {
+  return {
+    id: this._id,
+    title: this.title,
+    movies: [this.movieTitles]
+  }
+};
 
 userSchema.pre('find', function(next) {
   this.populate('lists');
