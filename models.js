@@ -4,7 +4,10 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
 const movieSchema = mongoose.Schema({
-  title: String,
+  title: {
+    type: String,
+    unique: true
+  },
   releaseYear: String,
   image: String
 });
@@ -27,7 +30,7 @@ const userSchema = mongoose.Schema({
   moviesSeen: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }]
 });
 
-listSchema.virtual('movieTitles').get(function() {
+/*listSchema.virtual('movieTitles').get(function() {
   for(let i = 0;i < this.movies.length;i ++) {
     if(i === (this.movies.length - 1)) {
       return `${this.movies[i].title}`;
@@ -38,11 +41,33 @@ listSchema.virtual('movieTitles').get(function() {
   }
 });
 
+movieSchema.virtual('movieTitles').get(function() {
+  return `${this.title}`;
+});
+
 listSchema.methods.serialize = function() {
   return {
     id: this._id,
     title: this.title,
     movies: [this.movieTitles]
+  }
+};
+*/
+
+listSchema.methods.serialize = function() {
+  return {
+    id: this._id,
+    title: this.title,
+    movies: this.movies
+  }
+};
+
+movieSchema.methods.serialize = function() {
+  return {
+    id: this._id,
+    title: this.title,
+    releaseYear: this.releaseYear,
+    image: this.image
   }
 };
 
@@ -60,10 +85,12 @@ userSchema.pre('findOne', function(next) {
 
 listSchema.pre('find', function(next) {
   this.populate('movies');
+  next();
 });
 
 listSchema.pre('findOne', function(next) {
   this.populate('movies');
+  next();
 });
 
 const User = mongoose.model('User', userSchema);

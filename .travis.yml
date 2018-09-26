@@ -7,3 +7,5 @@ deploy:
   app: seen-o-phile
   on:
     repo: rcaseyx/seen-o-phile
+services:
+- mongodb
