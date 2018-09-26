@@ -29,7 +29,7 @@ const userSchema = mongoose.Schema({
 
 listSchema.virtual('movieTitles').get(function() {
   for(let i = 0;i < this.movies.length;i ++) {
-    if(i < (this.movies.length - 1)) {
+    if(i === (this.movies.length - 1)) {
       return `${this.movies[i].title}`;
     }
     else {
