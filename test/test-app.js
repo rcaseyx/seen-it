@@ -13,11 +13,16 @@ const expect = chai.expect;
 
 chai.use(chaiHttp);
 
+function seedSeenItData() {
+  seedMovieData();
+  seedListData();
+}
+
 function seedMovieData() {
-  console.info('seeding List data');
+  console.info('seeding Movie data');
   const seedData = [];
 
-  for(let i = 1; i <=10; i++) {
+  for(let i = 1; i <=2; i++) {
     seedData.push(generateMovieData());
   }
 
@@ -49,10 +54,17 @@ function generateListData() {
   Movie.find()
     .then(function(_movies) {
       _movies.forEach(movie => movies.push(movie.id));
+
+      return {
+        title: faker.company.companyName(),
+        movies: [movies[0], movies[1]]
+      };
     });
+}
 
-
-
+function tearDownDb() {
+  console.warn('Deleting database');
+  return mongoose.connection.dropDatabase();
 }
 
 describe('Seen-O-Phile', function() {
@@ -60,16 +72,32 @@ describe('Seen-O-Phile', function() {
     return runServer(TEST_DATABASE_URL);
   });
 
+  beforeEach(function() {
+    return seedSeenItData();
+  });
+
+  afterEach(function() {
+    return tearDownDb();
+  });
+
   after(function() {
     return closeServer();
   });
 
-  it('should return 200 on index page', function() {
-    return chai.request(app)
-      .get('/')
-      .then(function(res) {
-        expect(res).to.have.status(200);
-        expect(res).to.be.html;
-      });
+  describe('GET endpoints', function() {
+    it('should return all existing lists', function() {
+      let res;
+      return chai.request(app)
+        .get('/lists')
+        .then(function(_res) {
+          res = _res;
+          expect(res).to.have.status(200);
+          expect(res.body.lists).to.have.lengthOf.at.least(1);
+          return List.count();
+        })
+        .then(function (count) {
+          expect(res.body.lists).to.have.lengthOf(count);
+        });
+    });
   });
 });
