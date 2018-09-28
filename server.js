@@ -12,10 +12,12 @@ const {User, List, Movie} = require('./models');
 
 const listsRouter = require('./lists');
 const moviesRouter = require('./movies');
+const usersRouter = require('./users');
 
 app.use(morgan('common'));
 app.use('/lists', listsRouter);
 app.use('/movies', moviesRouter);
+app.use('/users', usersRouter);
 
 let server;
 
