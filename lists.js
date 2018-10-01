@@ -81,6 +81,21 @@ router.put('/:id', (req, res) => {
     .catch(err => res.status(500).json({ message: 'Internal Server Error'}));
 });
 
+router.delete('/:id', (req, res) => {
+  List.findById(req.params.id)
+    .then(list => {
+      if(!(req.body.user === list.createdBy.id)) {
+        return res.status(400).json({ message: 'Only the creator of this list may delete it.' });
+      }
+      else {
+        List.findByIdAndRemove(req.params.id)
+          .then(list => res.status(204).end())
+          .catch(err => res.status(500).json({ message: 'Internal Server Error'}));
+      }
+    })
+    .catch(err => res.status(500).json({ message: 'Internal Server Error'}));
+});
+
 
 
 
