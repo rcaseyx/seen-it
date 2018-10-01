@@ -58,18 +58,27 @@ router.put('/:id', (req, res) => {
     return res.status(400).json({ message: message });
   }
 
-  const toUpdate = {};
-  const updateableFields = ['title', 'movies', 'private'];
+  List.findById(req.params.id)
+    .then(list => {
+      if(!(req.body.user === list.createdBy.id)) {
+        return res.status(400).json({ message: 'Only the creator of this list may make edits.' });
+      }
+      else {
+        const toUpdate = {};
+        const updateableFields = ['title', 'movies', 'private'];
 
-  updateableFields.forEach(field => {
-    if(field in req.body) {
-      toUpdate[field] = req.body[field];
-    }
-  });
+        updateableFields.forEach(field => {
+          if(field in req.body) {
+            toUpdate[field] = req.body[field];
+          }
+        });
 
-  List.findByIdAndUpdate(req.params.id, { $set: toUpdate }, { new: true })
-    .then(list => res.status(201).json(list.serialize()))
-    .catch(err => res.status(500).json({ message: "Internal server error" }));
+        List.findByIdAndUpdate(req.params.id, { $set: toUpdate }, { new: true })
+          .then(list => res.status(201).json(list.serialize()))
+          .catch(err => res.status(500).json({ error: 'Internal Server Error' }));
+      }
+    })
+    .catch(err => res.status(500).json({ message: 'Internal Server Error'}));
 });
 
 
