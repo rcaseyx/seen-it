@@ -51,57 +51,25 @@ router.post('/', (req, res) => {
     });
 });
 
-
-//not working. when the JSON is returned, it has the unchanged document. when you run get/:id,
-//it doesn't have the movies that were originally there. just the ones added.
 router.put('/:id', (req, res) => {
   if(!(req.params.id === req.body.id)) {
-    const message = `Request path id (${req.params.id}) and request body id (${req.body.id}) must match`;
+    const message = `Request path id (${req.params.id}) and request body id ${req.body.id} must match`;
     console.error(message);
     return res.status(400).json({ message: message });
   }
 
-  function getList(listId) {
-    return List.findById(listId)
-            .then(function(list) {
-              let allMovies = [];
-              list.movies.forEach(function(movie) {
-                allMovies.push(movie.id);
-              });
-              return allMovies;
-            })
-            .catch(err => {
-              console.error(err);
-              res.status(500).json({ error: 'Internal Server Error' });
-            });
-  }
-
-  let movieIds;
-  getList(req.params.id).then(function(movies) {
-      movieIds = movies;
-  });
-
-  console.log(movieIds);
-
-
   const toUpdate = {};
-  const updateableFields = ['movies','private'];
+  const updateableFields = ['title', 'movies', 'private'];
 
   updateableFields.forEach(field => {
     if(field in req.body) {
-      if(field === 'movies') {
-        req.body.movies.forEach(movie => allMovies.push(movie));
-        toUpdate.movies = allMovies;
-      }
-      else {
-        toUpdate[field] = req.body[field];
-      }
+      toUpdate[field] = req.body[field];
     }
   });
 
-  List.findByIdAndUpdate(req.params.id, { $set: toUpdate })
+  List.findByIdAndUpdate(req.params.id, { $set: toUpdate }, { new: true })
     .then(list => res.status(201).json(list.serialize()))
-    .catch(err => res.status(500).json({ error: 'Internal Server Error' }));
+    .catch(err => res.status(500).json({ message: "Internal server error" }));
 });
 
 
