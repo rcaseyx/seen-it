@@ -1,8 +1,16 @@
 'use strict';
 const express = require('express');
 const bodyParser = require('body-parser');
+const passport = require('passport');
 
-const {User} = require('./models');
+const { User } = require('./models');
+
+const { localStrategy, jwtStrategy } = require('../auth');
+
+passport.use(localStrategy);
+passport.use(jwtStrategy);
+
+const jwtAuth = passport.authenticate('jwt', { session: false });
 
 const router = express.Router();
 
@@ -54,7 +62,7 @@ router.post('/', jsonParser, (req, res) => {
       min: 1
     },
     password: {
-      min: 10,
+      min: 8,
       max: 72
     }
   };
@@ -115,11 +123,11 @@ router.post('/', jsonParser, (req, res) => {
       if (err.reason === 'ValidationError') {
         return res.status(err.code).json(err);
       }
-      res.status(500).json({code: 500, message: 'Internal server error'});
+      res.status(500).json({code: 500, message: 'Internal server error', error: err});
     });
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', jwtAuth, (req, res) => {
   if(!(req.params.id === req.body.id)) {
     const message = `Request path id (${req.params.id}) and request body id ${req.body.id} must match`;
     console.error(message);
@@ -140,15 +148,15 @@ router.put('/:id', (req, res) => {
     .catch(err => res.status(500).json({ message: "Internal server error" }));
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', jwtAuth, (req, res) => {
   User.findByIdAndRemove(req.params.id)
     .then(user => res.status(204).end())
     .catch(err => res.status(500).json({ message: "Internal server error" }));
 });
 
-router.get('/', (req, res) => {
-  return User.find()
-    .then(users => res.json(users.map(user => user.serialize())))
+router.get('/:id', jwtAuth, (req, res) => {
+  User.findById(req.params.id)
+    .then(user => res.json(user.serialize()))
     .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 

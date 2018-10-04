@@ -1,11 +1,19 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
+const passport = require('passport');
 mongoose.Promise = global.Promise;
 
-const { List, Movie, User } = require('./models');
+const { List, Movie } = require('./models');
+const { User } = require('./users/models')
+const { localStrategy, jwtStrategy } = require('./auth');
 
-router.get('/', (req, res) => {
+passport.use(localStrategy);
+passport.use(jwtStrategy);
+
+const jwtAuth = passport.authenticate('jwt', { session: false });
+
+router.get('/', jwtAuth, (req, res) => {
   List.find()
     .then(lists => {
       res.json({
@@ -18,7 +26,7 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', jwtAuth, (req, res) => {
   List.findById(req.params.id)
     .then(list => res.json(list.serialize()))
     .catch(err => {
@@ -27,7 +35,7 @@ router.get('/:id', (req, res) => {
     });
 });
 
-router.post('/', (req, res) => {
+router.post('/', jwtAuth, (req, res) => {
   const requiredFields = ['title','movies','createdBy','private'];
   for(let i = 0; i < requiredFields.length; i++) {
     const field = requiredFields[i];
@@ -51,7 +59,7 @@ router.post('/', (req, res) => {
     });
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', jwtAuth, (req, res) => {
   if(!(req.params.id === req.body.id)) {
     const message = `Request path id (${req.params.id}) and request body id ${req.body.id} must match`;
     console.error(message);
@@ -81,7 +89,7 @@ router.put('/:id', (req, res) => {
     .catch(err => res.status(500).json({ message: 'Internal Server Error'}));
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', jwtAuth, (req, res) => {
   List.findById(req.params.id)
     .then(list => {
       if(!(req.body.user === list.createdBy.id)) {

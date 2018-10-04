@@ -16,15 +16,13 @@ const {User, List, Movie} = require('./models');
 const listsRouter = require('./lists');
 const moviesRouter = require('./movies');
 const { router: usersRouter } = require('./users');
-const { router: authRouter, localStrategy, jwtStrategy } = require('./auth');
+const { router: authRouter } = require('./auth');
 
 app.use(morgan('common'));
 app.use('/lists', listsRouter);
 app.use('/movies', moviesRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
-passport.use(localStrategy);
-passport.use(jwtStrategy);
 
 let server;
 
