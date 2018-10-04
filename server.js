@@ -2,6 +2,9 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const morgan = require('morgan');
+const passport = require('passport');
+require('dotenv').config();
+
 app.use(express.static('public'));
 app.use(express.json());
 
@@ -12,12 +15,16 @@ const {User, List, Movie} = require('./models');
 
 const listsRouter = require('./lists');
 const moviesRouter = require('./movies');
-const usersRouter = require('./users');
+const { router: usersRouter } = require('./users');
+const { router: authRouter, localStrategy, jwtStrategy } = require('./auth');
 
 app.use(morgan('common'));
 app.use('/lists', listsRouter);
 app.use('/movies', moviesRouter);
 app.use('/users', usersRouter);
+app.use('/auth', authRouter);
+passport.use(localStrategy);
+passport.use(jwtStrategy);
 
 let server;
 

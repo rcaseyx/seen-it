@@ -64,7 +64,7 @@ function generateListData() {
 
 function tearDownDb() {
   console.warn('Deleting database');
-  return mongoose.connection.dropDatabase();
+  return mongoose.connection.db.dropDatabase();
 }
 
 describe('Seen-O-Phile', function() {
