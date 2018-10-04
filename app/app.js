@@ -1,5 +1,7 @@
 "use strict";
 let user;
+let authToken;
+const endpoint = 'http://localhost:8080';
 
 function handleLogin() {
   $('.login-form').submit(function(e) {
@@ -8,30 +10,33 @@ function handleLogin() {
     const password = $('#password').val();
     $('#uname').val('');
     $('#password').val('');
-    const checkUser = MOCK_USERS.users.find(function(obj) {
-      if(obj.userName === uname) {
-        return obj;
-      }
-      else {
-        return false;
-      }
-    });
-    if(checkUser) {
-      if(checkUser.password === password) {
-        console.log('success');
-        user = checkUser;
-        login(user);
-      }
-      else {
-        console.log('wrong password');
-        $('.message').html('Incorrect username or password.');
-      };
-    }
-    else {
-      console.log('username not found');
-      $('.message').html('Incorrect username or password.');
+
+    attemptLogin(uname,password);
+  });
+}
+
+function attemptLogin(username,password) {
+  let data = {
+    username: username,
+    password: password
+  }
+
+  $.ajax({
+    type: 'POST',
+    data: JSON.stringify(data),
+    contentType: 'application/json',
+    url: `${endpoint}/auth/login`,
+    success: function(result) {
+      fakeLogin(result);
+    },
+    error: function(error) {
+      $('.message').html(error.responseJSON.message);
     }
   });
+}
+
+function fakeLogin(data) {
+  console.log(data);
 }
 
 function login(user) {
@@ -241,6 +246,8 @@ function reloadLogin() {
   $('.login').prop('hidden',false);
   $('.login-form').prop('hidden',false);
   $('.login-form fieldset').prop('hidden',false);
+  $('.sign-up-section').html('');
+  $('.sign-up-section').prop('hidden',true);
 }
 
 function handleViewSeen() {
@@ -275,6 +282,82 @@ function handleViewProfile() {
   });
 }
 
+function handleSignUp() {
+  $('.sign-up').click(function() {
+    clearLogin();
+    $('.sign-up-section').html('');
+    const html = `<form class="sign-up-form">
+                    <fieldset>
+                      <legend>Create Account</legend>
+                      <label for="uname-su">User Name:
+                        <input type="text" id="uname-su" required>
+                      </label>
+                      <label for="password-su">Password:
+                        <input type="password" id="password-su" required>
+                      </label>
+                      <label for="firstName">First Name:
+                        <input type="text" id="firstName">
+                      </label>
+                      <label for="lastName">Last Name:
+                        <input type="text" id="lastName">
+                      </label>
+                      <input type="submit" class="submit-create-account">
+                    </fieldset>
+                  </form>`;
+
+    $('.sign-up-section').html(html);
+  });
+}
+
+function handleCreateAccount() {
+  $('.sign-up-section').on('click','.submit-create-account',function(e) {
+    e.preventDefault();
+    const username = $(this).closest('form').find('#uname-su').val();
+    const password = $(this).closest('form').find('#password-su').val();
+    const firstName = $(this).closest('form').find('#firstName').val();
+    const lastName = $(this).closest('form').find('#lastName').val();
+
+    createNewAccount(username,password,firstName,lastName);
+  });
+}
+
+function createNewAccount(username, password, firstName, lastName) {
+  let data = {
+    username: username,
+    password: password,
+    firstName: firstName,
+    lastName: lastName
+  };
+
+  $('.message').html('');
+
+  $.ajax({
+    type: 'POST',
+    data: JSON.stringify(data),
+    contentType: 'application/json',
+    url: `${endpoint}/users`,
+    success: function(result) {
+      displayNewUser(result);
+    },
+    error: function(error) {
+      $('.message').html(error.responseJSON.message);
+    }
+  });
+}
+
+function displayNewUser(data) {
+  $('.sign-up-section').html('');
+  const html = `<div>Congratulations! User "${data.username}" was created successfully!<div>
+                <button class="newLogin">Login</button>`;
+  $('.sign-up-section').html(html);
+}
+
+function handleNewLogin() {
+  $('.sign-up-section').on('click','.newLogin',function() {
+    reloadLogin();
+  });
+}
+
 
 
 
@@ -289,6 +372,9 @@ function handleApp() {
   handleLogout();
   handleViewSeen();
   handleViewProfile();
+  handleSignUp();
+  handleCreateAccount();
+  handleNewLogin();
 }
 
 $(handleApp);
