@@ -27,16 +27,16 @@ function attemptLogin(username,password) {
     contentType: 'application/json',
     url: `${endpoint}/auth/login`,
     success: function(result) {
-      fakeLogin(result);
+      user = result.user;
+      authToken = result.authToken;
+      login(user);
     },
     error: function(error) {
-      $('.message').html(error.responseJSON.message);
+      console.log(error);
+      //$('.message').html(error.responseJSON.message);
+      // need to come back and figure out login errors
     }
   });
-}
-
-function fakeLogin(data) {
-  console.log(data);
 }
 
 function login(user) {
@@ -51,9 +51,10 @@ function login(user) {
   $('.message').prop('hidden',true);
   $('.seenData').html('');
   $('.seenData').prop('hidden',true);
+  $('.sign-up-section').html('');
+  $('.sign-up-section').prop('hidden',true);
   getListData(user, displayListData);
-  let data = getAllLists();
-  displayAllLists(data);
+  getAllLists();
   $('.seen').html(`<button>View Seen Data</button>`);
   $('.userProfile').html('');
   $('.userProfile').html(`Logged in as ${user.firstName} |  <a href="#" class="profile">View Profile</a>  |   <a href="#" class="logout">Logout</a>`);
@@ -61,15 +62,29 @@ function login(user) {
 
 function getListData(user, callback) {
   let lists = [];
+  let completedReqs = 0;
 
   if(user.lists.length > 0) {
     user.lists.forEach(function(id) {
-      let userList = MOCK_DEFAULT_LISTS.lists.find(function(list) {
-        return list.id === id;
+      $.ajax({
+        type: 'GET',
+        contentType: 'application/json',
+        url: `${endpoint}/lists/${id}`,
+        headers: {
+          "Authorization": `Bearer ${authToken}`
+        },
+        success: function(result) {
+          lists.push(result);
+          completedReqs ++;
+          if(completedReqs === user.lists.length) {
+            callback(lists);
+          }
+        },
+        error: function(error) {
+          console.log(error);
+        }
       });
-      lists.push(userList);
     });
-    callback(lists);
   }
   else {
     $('.your').append('No lists found');
@@ -83,30 +98,39 @@ function displayListData(data) {
 }
 
 function getAllLists() {
-  let allLists = [];
-  let userLists = user.lists;
+  $.ajax({
+    type: 'GET',
+    contentType: 'application/json',
+    url: `${endpoint}/lists`,
+    headers: {
+      "Authorization": `Bearer ${authToken}`
+    },
+    success: function(result) {
+      let allLists = result.lists;
+      let userLists = user.lists;
 
-  MOCK_DEFAULT_LISTS.lists.forEach(function(list) {
-    allLists.push(list);
-  });
+      let listsToRemove = [];
+      userLists.forEach(function(list) {
+        let addedList =
+        allLists.find(function(fullList) {
+          return fullList.id === list;
+        });
+        listsToRemove.push(addedList);
+      });
 
-  let listsToRemove = [];
-  userLists.forEach(function(list) {
-    let addedList =
-    allLists.find(function(fullList) {
-      return fullList.id === list;
-    });
-    listsToRemove.push(addedList);
-  });
+      listsToRemove.forEach(function(remove) {
+        let index = allLists.indexOf(remove);
+        if(index > -1) {
+          allLists.splice(index, 1);
+        }
+      });
 
-  listsToRemove.forEach(function(remove) {
-    let index = allLists.indexOf(remove);
-    if(index > -1) {
-      allLists.splice(index, 1);
+      displayAllLists(allLists);
+    },
+    error: function(error) {
+      console.log(error);
     }
   });
-
-  return allLists;
 }
 
 function displayAllLists(data) {
