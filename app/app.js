@@ -57,7 +57,7 @@ function login(user) {
   getAllLists();
   $('.seen').html(`<button>View Seen Data</button>`);
   $('.userProfile').html('');
-  $('.userProfile').html(`Logged in as ${user.firstName} |  <a href="#" class="profile">View Profile</a>  |   <a href="#" class="logout">Logout</a>`);
+  $('.userProfile').html(`Logged in as ${user.username} |  <a href="#" class="profile">View Profile</a>  |   <a href="#" class="logout">Logout</a>`);
 }
 
 function getListData(user, callback) {
@@ -179,7 +179,7 @@ function handleViewList() {
     $('.lists').prop('hidden',true);
     $('.list').prop('hidden',false);
 
-    generateListDetail(listId);
+    getList(listId);
 
   });
 }
@@ -194,55 +194,55 @@ function handleRemoveList() {
   });
 }
 
-function generateListDetail(listId) {
-  const list = MOCK_DEFAULT_LISTS.lists.find(function(list) {
-    return list.id === listId;
-  });
+function getList(listId) {
+  $.ajax({
+    type: 'GET',
+    contentType: 'application/json',
+    url: `${endpoint}/lists/${listId}`,
+    headers: {
+      "Authorization": `Bearer ${authToken}`
+    },
+    success: function(result) {
+      generateListDetail(result);
+    },
+    error: function(error) {
+      console.log(error);
+    }
+  })
+}
 
+function generateListDetail(list) {
+
+  let listId = list.id;
   let listTitle = list.title;
-  let movieIds = [];
-  let seenMovieIds = [];
-
-  for(let i = 0;i < list.movies.length;i ++) {
-    if(user.moviesSeen.includes(list.movies[i])) {
-      seenMovieIds.push(list.movies[i]);
-    }
-    else {
-      movieIds.push(list.movies[i]);
-    }
-  }
-
   let movies = [];
   let seenMovies = [];
 
-  movieIds.forEach(function(movieId) {
-    let movie = MOCK_MOVIES.movies.find(function(movie) {
-      return movie.id === movieId;
-    });
-    movies.push(movie);
-  });
-
-  seenMovieIds.forEach(function(movieId) {
-    let movie = MOCK_MOVIES.movies.find(function(movie) {
-      return movie.id === movieId;
-    });
-    seenMovies.push(movie);
-  });
+  for(let i = 0;i < list.movies.length;i ++) {
+    if(user.moviesSeen.includes(list.movies[i]._id)) {
+      seenMovies.push(list.movies[i]);
+    }
+    else {
+      movies.push(list.movies[i]);
+    }
+  };
 
   displayListDetail(listTitle,movies,seenMovies,listId);
 }
 
 function displayListDetail(title,data,seenData,listId) {
+
   $('.title').html('');
   $('.title').append(`<h3>${title}</h3>`);
   $('.detail').html('');
   data.forEach(function(movie) {
-    $('.detail').append(`<div class="movie" id="${movie.id}">${movie.title} <img src="${movie.posterImage}" alt="${movie.title} poster"><button class="seen" id="${listId}">Seen It</button></div>`);
+    $('.detail').append(`<div class="movie" id="${movie._id}">${movie.title} <img src="${movie.image}" alt="${movie.title} poster"><button class="seen" id="${listId}">Seen It</button></div>`);
   });
   $('.detailSeen').html('');
   seenData.forEach(function(movie) {
-    $('.detailSeen').append(`<div class="movie" id="${movie.id}"><del>${movie.title}</del> <img src="${movie.posterImage}" alt="${movie.title} poster"></div>`);
+    $('.detailSeen').append(`<div class="movie" id="${movie._id}"><del>${movie.title}</del> <img src="${movie.image}" alt="${movie.title} poster"></div>`);
   });
+
 }
 
 function handleSeenIt() {
