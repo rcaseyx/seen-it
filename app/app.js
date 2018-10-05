@@ -272,6 +272,7 @@ function handleLogout() {
 
 function logout() {
   user = false;
+  authToken = '';
   $('.your').html('');
   $('.all').html('');
   $('.title').html('');
