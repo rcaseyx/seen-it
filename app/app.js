@@ -250,8 +250,8 @@ function handleSeenIt() {
     let listId = $(this).attr('id');
     let movieId = $(this).closest('div').attr('id');
     user.moviesSeen.push(movieId);
-
-    generateListDetail(listId);
+    updateUser(user);
+    getList(listId);
   });
 }
 
