@@ -55,9 +55,16 @@ function login(user) {
   $('.sign-up-section').prop('hidden',true);
   getListData(user, displayListData);
   getAllLists();
-  $('.seen').html(`<button>View Seen Data</button>`);
-  $('.userProfile').html('');
-  $('.userProfile').html(`Logged in as ${user.username} |  <a href="#" class="profile">View Profile</a>  |   <a href="#" class="logout">Logout</a>`);
+  updateHeader();
+}
+
+function updateHeader() {
+  $('.links').html('');
+  let html = `<li>Logged in as ${user.username} |</li>
+              <li><a href="#" class="profile">View Profile</a> |</li>
+              <li><a href="#" class="viewMoviesSeen">View Movies Seen</a> |</li>
+              <li><a href="#" class="logout">Logout</a></li>`;
+  $('.links').append(html);
 }
 
 function getListData(user, callback) {
@@ -264,7 +271,7 @@ function clearLogin() {
 }
 
 function handleLogout() {
-  $('.userProfile').on('click', '.logout', function() {
+  $('.links').on('click', '.logout', function() {
     logout();
     reloadLogin();
   });
@@ -281,8 +288,6 @@ function logout() {
   $('.seenData').html('');
   $('.lists').prop('hidden',true);
   $('.list').prop('hidden',true);
-  $('.userProfile').html('');
-  $('.userProfile').prop('hidden',true);
   $('.seenData').prop('hidden',true);
 }
 
@@ -297,8 +302,10 @@ function reloadLogin() {
 }
 
 function handleViewSeen() {
-  $('.seen').on('click','button', function() {
+  $('.links').on('click','.viewMoviesSeen',function() {
     $('.lists').prop('hidden',true);
+    $('.detailSeen').html('');
+    $('.list').prop('hidden',true);
     $('.seenData').prop('hidden',false);
     $('.seenData').html('');
     let html = generateSeenData(user);
@@ -340,7 +347,7 @@ function displaySeenData(data) {
 }
 
 function handleViewProfile() {
-  $('.userProfile').on('click', '.profile', function() {
+  $('.links').on('click', '.profile', function() {
     login(user);
   });
 }
