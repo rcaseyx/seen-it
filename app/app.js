@@ -308,16 +308,33 @@ function handleViewSeen() {
 function generateSeenData(user) {
   let seenIds = user.moviesSeen;
   let seenMovies = [];
+  let completedReqs = 0;
 
   seenIds.forEach(function(movieId) {
-    let movie = MOCK_MOVIES.movies.find(function(movie) {
-      return movie.id === movieId;
+    $.ajax({
+      type: 'GET',
+      contentType: 'application/json',
+      url: `${endpoint}/movies/${movieId}`,
+      headers: {
+        "Authorization": `Bearer ${authToken}`
+      },
+      success: function(result) {
+        seenMovies.push(result);
+        completedReqs ++;
+        if(completedReqs === seenIds.length) {
+          displaySeenData(seenMovies);
+        }
+      },
+      error: function(error) {
+        console.log(error);
+      }
     });
-    seenMovies.push(movie);
   });
+}
 
-  seenMovies.forEach(function(movie) {
-    $('.seenData').append(`<div class="movie" id="${movie.id}">${movie.title} <img src="${movie.posterImage}" alt="${movie.title} poster"></div>`);
+function displaySeenData(data) {
+  data.forEach(function(movie) {
+    $('.seenData').append(`<div class="movie" id="${movie.id}">${movie.title} <img src="${movie.image}" alt="${movie.title} poster"></div>`);
   });
 }
 
