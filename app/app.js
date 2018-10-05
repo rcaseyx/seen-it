@@ -149,7 +149,27 @@ function handleAddList() {
   $('.all').on('click', 'a', function() {
     const listId = $(this).attr('id');
     user.lists.push(listId);
+    updateUser(user);
     login(user);
+  });
+}
+
+function updateUser(data) {
+  $.ajax({
+    type: 'PUT',
+    data: JSON.stringify(data),
+    contentType: 'application/json',
+    url: `${endpoint}/users/${user.id}`,
+    headers: {
+      "Authorization": `Bearer ${authToken}`
+    },
+    success: function(result) {
+      user = result;
+      console.log('Updated user');
+    },
+    error: function(error) {
+      console.log(error);
+    }
   });
 }
 
@@ -169,6 +189,7 @@ function handleRemoveList() {
     const listId = $(this).closest('div').attr('id');
     let index = user.lists.indexOf(listId);
     user.lists.splice(index, 1);
+    updateUser(user);
     login(user);
   });
 }
