@@ -367,11 +367,8 @@ function reloadLogin() {
 
 function handleViewSeen() {
   $('.links').on('click','.viewMoviesSeen',function() {
-    $('.lists').prop('hidden',true);
-    $('.detailSeen').html('');
-    $('.list').prop('hidden',true);
-    $('.seenData').prop('hidden',false);
-    $('.seenData').html('');
+    clearPage();
+    updateHeader();
     let html = generateSeenData(user);
     $('.seenData').html(html);
   });
