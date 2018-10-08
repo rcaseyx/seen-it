@@ -41,6 +41,7 @@ function attemptLogin(username,password) {
 
 function login(user) {
   clearLogin();
+  clearPage();
   $('.lists').prop('hidden',false);
   $('.your').html('');
   $('.all').html('');
@@ -63,6 +64,7 @@ function updateHeader() {
   let html = `<li>Logged in as ${user.username} |</li>
               <li><a href="#" class="profile">View Profile</a> |</li>
               <li><a href="#" class="viewMoviesSeen">View Movies Seen</a> |</li>
+              <li><a href="#" class="createList">Create New List</a> |</li>
               <li><a href="#" class="logout">Logout</a></li>`;
   $('.links').append(html);
 }
@@ -100,7 +102,12 @@ function getListData(user, callback) {
 
 function displayListData(data) {
   data.forEach(function(list) {
-    $('.your').append(`<li>${list.title} - <div id="${list.id}"><a href="#" class="view">View</a> <a href="#" class="remove">Remove</a></div></li>`);
+    if(list.createdBy._id === user.id) {
+      $('.your').append(`<li>${list.title} - <div id="${list.id}"><a href="#" class="view">View</a></li>`);
+    }
+    else {
+      $('.your').append(`<li>${list.title} - <div id="${list.id}"><a href="#" class="view">View</a> <a href="#" class="remove">Remove</a></div></li>`);
+    }
   });
 }
 
@@ -144,7 +151,9 @@ function displayAllLists(data) {
   if(data.length > 0) {
     $('.available').prop('hidden',false);
     data.forEach(function(list) {
-      $('.all').append(`<li>${list.title} - <a href="#" id="${list.id}">Add List</a></li>`);
+      if(!(list.private)) {
+        $('.all').append(`<li>${list.title} - <a href="#" id="${list.id}">Add List</a></li>`);
+      }
     });
   }
   else {
@@ -215,13 +224,14 @@ function getList(listId) {
     error: function(error) {
       console.log(error);
     }
-  })
+  });
 }
 
 function generateListDetail(list) {
 
   let listId = list.id;
   let listTitle = list.title;
+  let createdBy = list.createdBy._id;
   let movies = [];
   let seenMovies = [];
 
@@ -234,11 +244,14 @@ function generateListDetail(list) {
     }
   };
 
-  displayListDetail(listTitle,movies,seenMovies,listId);
+  displayListDetail(listTitle,movies,seenMovies,listId,createdBy);
 }
 
-function displayListDetail(title,data,seenData,listId) {
+function displayListDetail(title,data,seenData,listId,createdBy) {
 
+  $('.title').prop('hidden',false);
+  $('.detail').prop('hidden',false);
+  $('.detailSeen').prop('hidden',false);
   $('.title').html('');
   $('.title').append(`<h3>${title}</h3>`);
   $('.detail').html('');
@@ -249,7 +262,51 @@ function displayListDetail(title,data,seenData,listId) {
   seenData.forEach(function(movie) {
     $('.detailSeen').append(`<div class="movie" id="${movie._id}"><del>${movie.title}</del> <img src="${movie.image}" alt="${movie.title} poster"></div>`);
   });
+  if(createdBy === user.id) {
+    $('.detail').prepend(`<button class="deleteList">Delete List</button>`);
+  }
+}
 
+function handleDeleteList() {
+  $('.show').on('click','.deleteList',function() {
+    let listId = $(this).closest('.show').find('.seen').attr('id');
+    clearPage();
+    $('.detail').prop('hidden', false);
+    $('.detail').html(`<div id="${listId}">Are you sure you want to delete this list? This action cannot be undone.
+                    <button class="confirmDelete">Delete List</button> <button class="cancelDelete">Cancel</button></div>`);
+  });
+}
+
+function handleConfirmDeleteList() {
+  $('.detail').on('click','.confirmDelete',function() {
+    let listId = $(this).closest('div').attr('id');
+    $.ajax({
+      type: 'DELETE',
+      contentType: 'application/json',
+      url: `${endpoint}/lists/${listId}`,
+      headers: {
+        "Authorization": `Bearer ${authToken}`
+      },
+      success: function(result) {
+        let index = user.lists.indexOf(listId);
+        user.lists.splice(index,1);
+        updateUser(user);
+        login(user);
+      },
+      error: function(error) {
+        console.log(error);
+      }
+    });
+  });
+}
+
+function handleCancelDeleteList() {
+  $('.detail').on('click','.cancelDelete',function() {
+    let listId = $(this).closest('div').attr('id');
+    $('.detail').html('');
+    updateHeader();
+    getList(listId);
+  });
 }
 
 function handleSeenIt() {
@@ -280,12 +337,19 @@ function handleLogout() {
 function logout() {
   user = false;
   authToken = '';
+  clearPage();
+}
+
+function clearPage() {
   $('.your').html('');
   $('.all').html('');
   $('.title').html('');
   $('.detail').html('');
   $('.detailSeen').html('');
   $('.seenData').html('');
+  $('.links').html('');
+  $('.createListForm').html('');
+  $('.createListForm').prop('hidden',true);
   $('.lists').prop('hidden',true);
   $('.list').prop('hidden',true);
   $('.seenData').prop('hidden',true);
@@ -428,6 +492,111 @@ function handleNewLogin() {
   });
 }
 
+function handleCreateList() {
+  $('.links').on('click','.createList',function() {
+    $.ajax({
+      type: 'GET',
+      contentType: 'application/json',
+      url: `${endpoint}/movies`,
+      headers: {
+        "Authorization": `Bearer ${authToken}`
+      },
+      success: function(result) {
+        const movieArr = result.movies;
+        clearPage();
+        updateHeader();
+        let html = `<form class="create-list-form">
+                        <fieldset>
+                          <legend>Create List</legend>
+                          <label for="listTitle">List Title:
+                            <input type="text" id="listTitle" required>
+                          </label>
+                          <label for="movieChoices">Movies to Add:
+                            <select id="movieChoices" multiple>
+                              ${generateAllMovies(movieArr)}
+                            </select>
+                          </label>
+                          Would you like to make this list private?
+                            <label for="yesPublic" required>Yes<input type="radio" id="yesPublic" value="true"></label>
+                            <label for="noPublic" required>No<input type="radio" id="noPublic" value="false"></label>
+                          <input type="submit" class="submit-create-list">
+                        </fieldset>
+                      </form>`
+        $('.createListForm').prop('hidden',false);
+        $('.createListForm').html(html);
+      },
+      error: function(error) {
+        console.log(error);
+      }
+    });
+  });
+}
+
+function handleSubmitNewList() {
+  $('.createListForm').on('click','.submit-create-list',function() {
+    let listTitle = $(this).closest('form').find('#listTitle').val();
+    let movies = $(this).closest('form').find('#movieChoices').val();
+    let isPrivate;
+    let yesOrNo = $(this).closest('form').find('input[type=radio]:checked').attr('value');
+    if(yesOrNo === 'true') {
+      isPrivate = true;
+    }
+    else if(yesOrNo === 'false') {
+      isPrivate = false;
+    }
+
+    let data = {
+      title: listTitle,
+      movies: movies,
+      createdBy: user.id,
+      private: isPrivate
+    };
+
+    $.ajax({
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(data),
+      url: `${endpoint}/lists`,
+      headers: {
+        "Authorization": `Bearer ${authToken}`
+      },
+      success: function(result) {
+        clearPage();
+        updateHeader();
+        user.lists.push(result.id);
+        updateUser(user);
+        getList(result.id);
+      },
+      error: function(error) {
+        console.log(error);
+      }
+    });
+  });
+}
+
+function generateAllMovies(data) {
+  let returnHtml;
+  data.forEach(function(movie) {
+    returnHtml += `<option value="${movie.id}" required>${movie.title} (${movie.releaseYear})</option>`;
+  });
+  return returnHtml;
+}
+
+function handleMultipleOptions() {
+  $('.createListForm').on('mousedown','option',function(e) {
+    e.preventDefault();
+    let originalScrollTop = $(this).parent().scrollTop();
+    $(this).prop('selected', $(this).prop('selected') ? false : true);
+    let self = this;
+    $(this).parent().focus();
+    setTimeout(function() {
+        $(self).parent().scrollTop(originalScrollTop);
+    }, 0);
+
+    return false;
+  });
+}
+
 
 
 
@@ -445,6 +614,12 @@ function handleApp() {
   handleSignUp();
   handleCreateAccount();
   handleNewLogin();
+  handleCreateList();
+  handleSubmitNewList();
+  handleMultipleOptions();
+  handleDeleteList();
+  handleConfirmDeleteList();
+  handleCancelDeleteList();
 }
 
 $(handleApp);

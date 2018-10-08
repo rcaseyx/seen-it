@@ -88,3 +88,17 @@ form, input {
 .userProfile {
   float: right;
 }
+
+.create-list-form label {
+  display: block;
+}
+
+.create-list-form select {
+  display: block;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.deleteList {
+  display: block;
+}
