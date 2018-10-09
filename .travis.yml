@@ -4,7 +4,7 @@ deploy:
   provider: heroku
   api_key:
     secure: KeshOfT4Hslwq4oreFz3KfGJ7Hf0XpKzv+M8M1fNcQUeFB/m8QarwbPAm7X/GZGeiTaKnZuqZ9n0RvfIMIIxKh/NqawhUuIYEY9KiI4Jgtamh3MaB7rXRDhWOnkyxMj29Zww+Q597L6oDuRoUEUvuDnS15HoFli1CcfWIcOcZuycaVlTTRJIkZ0Za0i98dos+thOHskhLwqjy8ucnVPFNfVXIRsFkgfKtXsoUk3q0GXWGf8VaFmFozf77YHg8xSqWJff5/4rrzUGQ0Nd9FsxR7Nw94ko9nFKSr6FrIlgFdD/l/dVWKeptvKc6TzwcaA1f7SDtJCsRN0cX6lkbU70EYkB2mdW27qNrmlQzJA9XjRR1f3P+IiTMUiF0CAF9rdEegWGyvuS9SEdRA9/0kKYRtg3u8DMNN5IBEm9loT++cCsdW9UJnRXLQVY7kK+V6c5IO/U4s26/B2JF3FG92lLvejvHWd3PKG1FaVxj4HfVhGyETVEtnRBdbdt5IYHHBfDq2CqsVqPXQUdKVdcR0DsfZkdmtpuxC8XtDVZ3pHD0FzJcf0OdqBqOnKzjqP4tyzo04xFnc7yAEkH6Nh3i/mdh5wqrDX/fqBWk/Sd+ObEiaXpOQN7B+tdLOdxHbBtlp+f/LVln0V+qDH+UbcvsRga2CbBzt1wBux2NiPtiurrNtE=
-  app: seen-o-phile
+  app: seen-it-app
   on:
     repo: rcaseyx/seen-o-phile
 services:
