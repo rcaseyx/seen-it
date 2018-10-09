@@ -50,7 +50,7 @@ router.post('/', jwtAuth, (req, res) => {
     title: req.body.title,
     movies: req.body.movies,
     createdBy: req.body.createdBy,
-    private: true
+    private: req.body.private
   })
     .then(list => res.status(201).json(list.serialize()))
     .catch(err => {
@@ -90,17 +90,8 @@ router.put('/:id', jwtAuth, (req, res) => {
 });
 
 router.delete('/:id', jwtAuth, (req, res) => {
-  List.findById(req.params.id)
-    .then(list => {
-      if(!(req.body.user === list.createdBy.id)) {
-        return res.status(400).json({ message: 'Only the creator of this list may delete it.' });
-      }
-      else {
-        List.findByIdAndRemove(req.params.id)
-          .then(list => res.status(204).end())
-          .catch(err => res.status(500).json({ message: 'Internal Server Error'}));
-      }
-    })
+  List.findByIdAndRemove(req.params.id)
+    .then(list => res.status(204).end())
     .catch(err => res.status(500).json({ message: 'Internal Server Error'}));
 });
 

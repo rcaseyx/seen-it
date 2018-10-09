@@ -2,18 +2,20 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>Seen-O-Phile</title>
+    <title>Seen It?</title>
     <link rel="stylesheet" href="main.css">
   </head>
   <body>
-    <header>
-      Seen-O-Phile
-    </header>
+    <header role="banner">
+			<h1>Seen It?</h1>
+			<ul class="links">
+			</ul>
+  	</header>
     <main>
       <section class="userProfile" hidden>
       </section>
       <section class="intro">
-        <p>Seen-O-Phile is an interactive application allowing users to view lists of the best movies ever made, add those lists to their accounts, and check off movies as they watch them. Start your cinematic journey today by logging in below!</p>
+        <p>Seen It? is an interactive application allowing users to view lists of the best movies ever made, add those lists to their accounts, and check off movies as they watch them. Start your cinematic journey today by logging in below!</p>
       </section>
       <section class="login">
         <form class="login-form">
@@ -30,8 +32,13 @@
         </form>
         <div class="message"></div>
       </section>
+      <section class="sign-up-section">
+        Don't have an account? Sign up below!
+        <div>
+          <button class="sign-up">Sign Up</button>
+        </div>
+      </section>
       <section class="profile lists" hidden>
-        <div class="seen lists" hidden></div>
         <div class="added lists" hidden>
           Your Lists:
           <ul class="your lists" hidden>
@@ -49,6 +56,8 @@
         <div class="list detailSeen" hidden></div>
       </section>
       <section class="seenData" hidden>
+      </section>
+      <section class="createListForm" hidden>
       </section>
     </main>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
