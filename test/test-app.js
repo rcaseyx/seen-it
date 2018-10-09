@@ -91,13 +91,13 @@ describe('Seen-O-Phile', function() {
         .get('/lists')
         .then(function(_res) {
           res = _res;
-          expect(res).to.have.status(200);
-          expect(res.body.lists).to.have.lengthOf.at.least(1);
-          return List.count();
-        })
-        .then(function (count) {
-          expect(res.body.lists).to.have.lengthOf(count);
+          expect(res).to.have.status(401);
+          //expect(res.body.lists).to.have.lengthOf.at.least(1);
+          //return List.count();
         });
+        //.then(function (count) {
+        //  expect(res.body.lists).to.have.lengthOf(count);
+        //});
     });
   });
 });
