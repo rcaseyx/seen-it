@@ -1,7 +1,7 @@
 "use strict";
 let user;
 let authToken;
-const endpoint = 'http://localhost:8080';
+//const endpoint = 'http://localhost:8080';
 
 function handleLogin() {
   $('.login-form').submit(function(e) {
