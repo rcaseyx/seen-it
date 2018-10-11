@@ -4,12 +4,17 @@
     <meta charset="utf-8">
     <title>Seen It?</title>
     <link rel="stylesheet" href="main.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
   </head>
   <body>
     <header role="banner">
 			<h1>Seen It?</h1>
-			<ul class="links">
-			</ul>
+      <div class="linksContainer">
+  			<ul class="links">
+          <li> Welcome to Seen It! </li>
+  			</ul>
+    </div>
   	</header>
     <main>
       <section class="userProfile" hidden>
@@ -21,7 +26,7 @@
         <form class="login-form">
           <fieldset>
             <legend>Login</legend>
-            <label for="uname">User Name:
+            <label for="uname">Username:
               <input type="text" id="uname" placeholder="demo.user" required>
             </label>
             <label for="password">Password:
@@ -30,13 +35,11 @@
             <input type="submit" class="submit-login">
           </fieldset>
         </form>
-        <div class="message"></div>
       </section>
+      <section class="message"></section>
       <section class="sign-up-section">
-        Don't have an account? Sign up below!
-        <div>
-          <button class="sign-up">Sign Up</button>
-        </div>
+        <div>Don't have an account? Sign up below!</div>
+        <button class="sign-up">Sign Up</button>
       </section>
       <section class="profile lists" hidden>
         <div class="added lists" hidden>
@@ -61,7 +64,7 @@
       </section>
     </main>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script type="text/javascript" src="./app/app.js"></script>
-    <script type="text/javascript" src="./app/mockdata.js"></script>
+    <script type="text/javascript" src="../app/app.js"></script>
+    <script type="text/javascript" src="../app/mockdata.js"></script>
   </body>
 </html>

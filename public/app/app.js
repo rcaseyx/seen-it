@@ -102,10 +102,10 @@ function getListData(user, callback) {
 function displayListData(data) {
   data.forEach(function(list) {
     if(list.createdBy._id === user.id) {
-      $('.your').append(`<li>${list.title} - <div id="${list.id}"><a href="#" class="view">View</a></li>`);
+      $('.your').append(`<li>${list.title}  <div id="${list.id}"><a href="#" class="view">View</a></li>`);
     }
     else {
-      $('.your').append(`<li>${list.title} - <div id="${list.id}"><a href="#" class="view">View</a> <a href="#" class="remove">Remove</a></div></li>`);
+      $('.your').append(`<li>${list.title}  <div id="${list.id}"><a href="#" class="view">View</a> <a href="#" class="remove">Remove</a></div></li>`);
     }
   });
 }
@@ -151,7 +151,7 @@ function displayAllLists(data) {
     $('.available').prop('hidden',false);
     data.forEach(function(list) {
       if(!(list.private)) {
-        $('.all').append(`<li>${list.title} - <a href="#" id="${list.id}">Add List</a></li>`);
+        $('.all').append(`<li>${list.title}  <div><a href="#" id="${list.id}">Add List</a></li><div>`);
       }
     });
   }
@@ -231,6 +231,7 @@ function generateListDetail(list) {
   let listId = list.id;
   let listTitle = list.title;
   let createdBy = list.createdBy._id;
+  let createdByName = list.createdBy.username;
   let movies = [];
   let seenMovies = [];
 
@@ -243,26 +244,37 @@ function generateListDetail(list) {
     }
   };
 
-  displayListDetail(listTitle,movies,seenMovies,listId,createdBy);
+  displayListDetail(listTitle,movies,seenMovies,listId,createdBy,createdByName);
 }
 
-function displayListDetail(title,data,seenData,listId,createdBy) {
+function displayListDetail(title,data,seenData,listId,createdBy,createdByName) {
 
   $('.title').prop('hidden',false);
   $('.detail').prop('hidden',false);
   $('.detailSeen').prop('hidden',false);
   $('.title').html('');
-  $('.title').append(`<h3>${title}</h3>`);
+  if(!(createdBy === user.id)) {
+    $('.title').append(`<div class="titleAndAuthor">
+                          <h3>${title}</h3>
+                          <span>List created by ${createdByName}</span>
+                        </div>`);
+  }
+  else {
+    $('.title').append(`<div class="titleAndAuthor">
+                          <h3>${title}</h3>
+                          <span>List created by you</span>
+                        </div>`);
+  }
   $('.detail').html('');
   data.forEach(function(movie) {
     $('.detail').append(`<div class="movie" id="${movie._id}">${movie.title} <img src="${movie.image}" alt="${movie.title} poster"><button class="seen" id="${listId}">Seen It</button></div>`);
   });
   $('.detailSeen').html('');
   seenData.forEach(function(movie) {
-    $('.detailSeen').append(`<div class="movie" id="${movie._id}"><del>${movie.title}</del> <img src="${movie.image}" alt="${movie.title} poster"></div>`);
+    $('.detailSeen').append(`<div class="movie" id="${movie._id}"><del>${movie.title}</del> <img src="${movie.image}" alt="${movie.title} poster">You've seen it!</div>`);
   });
   if(createdBy === user.id) {
-    $('.detail').prepend(`<button class="deleteList">Delete List</button>`);
+    $('.title').append(`<button class="deleteList">Delete List</button>`);
   }
 }
 
@@ -348,6 +360,8 @@ function clearPage() {
   $('.seenData').html('');
   $('.links').html('');
   $('.createListForm').html('');
+  $('.message').html('');
+  $('.message').prop('hidden',true);
   $('.createListForm').prop('hidden',true);
   $('.lists').prop('hidden',true);
   $('.list').prop('hidden',true);
@@ -512,9 +526,12 @@ function handleCreateList() {
                               ${generateAllMovies(movieArr)}
                             </select>
                           </label>
-                          Would you like to make this list private?
+                          <span>Would you like to make this list private?</span>
+                          <span>(Private lists can only be seen by you)</span>
+                          <div class="selectPrivate">
                             <label for="yesPublic" required>Yes<input type="radio" id="yesPublic" value="true"></label>
                             <label for="noPublic" required>No<input type="radio" id="noPublic" value="false"></label>
+                          </div>
                           <input type="submit" class="submit-create-list">
                         </fieldset>
                       </form>`

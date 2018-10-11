@@ -2,39 +2,129 @@
   box-sizing: border-box;
 }
 
+body {
+  background-color: #F5F5F5;
+  color: #0E0B16;
+  font-family: 'Open Sans', sans-serif;
+}
+
 header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
-  height: 70px;
+  height: 100px;
   position: fixed;
-  margin-left: auto;
-  margin-right: auto;
   top: 0;
+  left: 0;
+  background-color: #A9A9A9;
+  color: #76323f;
+  border-bottom: 1px solid #0E0B16;
 }
 
 header h1 {
   float: none;
   position: absolute;
   top: 20%;
-  left: 50%;
+  left: 10%;
   transform: translate(-50%, -50%);
-  font-size: 27px;
+  font-size: 40px;
   display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: bold;
 }
 
-.links{
+.intro {
+  margin-top: 30px;
+  border-radius: 5px;
+  width: 30%;
+}
+
+.login {
+  /* border: 1px solid #A9A9A9;
+  background-color: #A9A9A9; */
+  border-radius: 5px;
+  width: 50%;
+  padding: 10px;
+}
+
+.login-form {
+  flex-direction: column;
+}
+
+.sign-up-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.sign-up-section button {
+  width: 20%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+}
+
+.linksContainer {
   float: none;
   position: absolute;
-  top: 70%;
-  left: 48%;
+  top: 50%;
+  left: 60%;
   transform: translate(-50%, -50%);
+  width: 70%;
+  text-align: center;
+}
+
+.links a {
+  text-decoration: none;
+  color: #76323f;
+}
+
+.links a:hover {
+  color: #F5F5F5;
 }
 
 .links ul {
   list-style-type: none;
 }
 
-.lists {
+.lists ul {
   list-style-type: none;
+  border: 1px solid black;
+  margin: 10px;
+  padding: 10px;
+  width: 400px;
+  border-radius: 5px;
+}
+
+.lists li {
+  border: 1px solid black;
+  padding: 5px;
+  padding: 5px;
+  width: 100%;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+}
+
+.lists a {
+  text-decoration: none;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border: 1px solid black;
+  padding: 3px;
+  display: inline-block;
+  background-color: white;
+  color: black;
+}
+
+.lists a:visited {
+  color: black;
+}
+
+.lists a:hover {
+  background-color: black;
+  color: white;
 }
 
 .links li {
@@ -43,11 +133,15 @@ header h1 {
   vertical-align: middle;
 }
 
+li div {
+  display: block;
+}
+
 main {
   display: flex;
   justify-content: center;
   flex-direction: column;
-  margin-top: 20px;
+  margin-top: 50px;
   padding-top: 20px;
 }
 
@@ -70,26 +164,96 @@ form, legend {
 }
 
 form, input {
-  display: flex;
+  margin-left: auto;
+  margin-right: auto;
   margin-top: 10px;
   margin-bottom: 10px;
+}
+
+.message {
+  color: red;
+}
+
+.title {
+  margin-left: auto;
+  margin-right: auto;
+  flex-basis: 100%;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.detail {
+  margin-right: 15px;
+}
+
+.detailSeen {
+  margin-left: 15px;
+}
+
+.show {
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+select {
+  height: 300px;
+  margin-bottom: 10px;
+}
+
+.selectPrivate {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.selectPrivate label,input {
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.movie {
+  display: flex;
+  border: 1px solid black;
+  justify-content: center;
+  flex-direction: column;
+  margin: 10px;
+  padding: 5px;
+  flex-basis: 33.33%;
+}
+
+.movie img {
+  width: 50%;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.seen {
+  width: 50%;
+  height: auto;
   margin-left: auto;
   margin-right: auto;
 }
 
-.movie {
-  display: block;
+.seenData {
+  flex-wrap: wrap;
+  width: 100%;
 }
 
-.movie img {
-  width: 20%;
-}
-
-.userProfile {
-  float: right;
+.seenData div {
+  flex-basis: 20%;
 }
 
 .create-list-form label {
+  display: block;
+}
+
+.create-list-form span {
   display: block;
 }
 
@@ -99,6 +263,36 @@ form, input {
   margin-bottom: 5px;
 }
 
+.titleAndAuthor {
+  margin-left: auto;
+  text-align: center;
+  margin-right: auto;
+}
+
 .deleteList {
+  margin-top: 10px;
+}
+
+.sign-up-form * {
   display: block;
+}
+
+.submit-create-account {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+@media only screen and (max-width: 640px) {
+
+  .seenData div {
+    flex-basis: 50%;
+  }
+}
+
+@media only screen and (min-width: 640px) and (max-width: 1024px) {
+
+  .seenData div {
+    flex-basis: 33.33%
+  }
 }
