@@ -1,6 +1,6 @@
 "use strict";
 let user;
-let authToken;
+//let authToken;
 
 function handleLogin() {
   $('.login-form').submit(function(e) {
@@ -27,7 +27,7 @@ function attemptLogin(username,password) {
     url: `/auth/login`,
     success: function(result) {
       user = result.user;
-      authToken = result.authToken;
+      localStorage.setItem("jwt",result.authToken);
       login(user);
     },
     error: function(error) {
@@ -79,7 +79,7 @@ function getListData(user, callback) {
         contentType: 'application/json',
         url: `/lists/${id}`,
         headers: {
-          "Authorization": `Bearer ${authToken}`
+          "Authorization": `Bearer ${localStorage.getItem("jwt")}`
         },
         success: function(result) {
           lists.push(result);
@@ -116,7 +116,7 @@ function getAllLists() {
     contentType: 'application/json',
     url: `/lists`,
     headers: {
-      "Authorization": `Bearer ${authToken}`
+      "Authorization": `Bearer ${localStorage.getItem("jwt")}`
     },
     success: function(result) {
       let allLists = result.lists;
@@ -176,7 +176,7 @@ function updateUser(data) {
     contentType: 'application/json',
     url: `/users/${user.id}`,
     headers: {
-      "Authorization": `Bearer ${authToken}`
+      "Authorization": `Bearer ${localStorage.getItem("jwt")}`
     },
     success: function(result) {
       user = result;
@@ -215,7 +215,7 @@ function getList(listId) {
     contentType: 'application/json',
     url: `/lists/${listId}`,
     headers: {
-      "Authorization": `Bearer ${authToken}`
+      "Authorization": `Bearer ${localStorage.getItem("jwt")}`
     },
     success: function(result) {
       generateListDetail(result);
@@ -296,7 +296,7 @@ function handleConfirmDeleteList() {
       contentType: 'application/json',
       url: `/lists/${listId}`,
       headers: {
-        "Authorization": `Bearer ${authToken}`
+        "Authorization": `Bearer ${localStorage.getItem("jwt")}`
       },
       success: function(result) {
         let index = user.lists.indexOf(listId);
@@ -398,7 +398,7 @@ function generateSeenData(user) {
       contentType: 'application/json',
       url: `/movies/${movieId}`,
       headers: {
-        "Authorization": `Bearer ${authToken}`
+        "Authorization": `Bearer ${localStorage.getItem("jwt")}`
       },
       success: function(result) {
         seenMovies.push(result);
@@ -509,7 +509,7 @@ function handleCreateList() {
       contentType: 'application/json',
       url: `/movies`,
       headers: {
-        "Authorization": `Bearer ${authToken}`
+        "Authorization": `Bearer ${localStorage.getItem("jwt")}`
       },
       success: function(result) {
         const movieArr = result.movies;
@@ -571,7 +571,7 @@ function handleSubmitNewList() {
       data: JSON.stringify(data),
       url: `/lists`,
       headers: {
-        "Authorization": `Bearer ${authToken}`
+        "Authorization": `Bearer ${localStorage.getItem("jwt")}`
       },
       success: function(result) {
         clearPage();
