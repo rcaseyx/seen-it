@@ -89,7 +89,7 @@ describe('Seen-O-Phile', function() {
     return closeServer();
   });
 
-  describe('POST to /users and /auth/login and set up', function() {
+  describe('POST endpoints and login', function() {
     it('should create a user and return user ID', function() {
       let data = {
         username: 'test.user',
@@ -143,15 +143,45 @@ describe('Seen-O-Phile', function() {
         createdBy: userId,
         private: false
       };
-      let res;
       let auth = `Bearer ${token}`;
       return chai.request(app)
         .post('/lists')
         .set('Authorization', auth)
         .send(data)
-        .then(function(_res) {
-          res = _res;
+        .then(function(res) {
           expect(res).to.have.status(201);
+          expect(res.body.title).to.equal(data.title);
+          expect(res.body.createdBy).to.equal(data.createdBy);
+          expect(res.body.private).to.equal(data.private);
+          return List.findById(res.body.id);
+        })
+        .then(function(list) {
+          expect(data.title).to.equal(list.title);
+          expect(data.createdBy).to.equal(list.createdBy.id);
+          expect(data.private).to.equal(list.private);
+        });
+    });
+
+    it('should create a new movie on POST', function() {
+      let data = {
+        title: faker.company.companyName(),
+        releaseYear: faker.date.past(),
+        image: faker.image.imageUrl()
+      };
+      let auth = `Bearer ${token}`;
+      return chai.request(app)
+        .post('/movies')
+        .set('Authorization', auth)
+        .send(data)
+        .then(function(res) {
+          expect(res).to.have.status(201);
+          expect(res.body.title).to.equal(data.title);
+          expect(res.body.image).to.equal(data.image);
+          return Movie.findById(res.body.id);
+        })
+        .then(function(movie) {
+          expect(data.title).to.equal(movie.title);
+          expect(data.image).to.equal(movie.image);
         });
     });
   });
@@ -208,4 +238,145 @@ describe('Seen-O-Phile', function() {
     });
   });
 
+  describe('PUT endpoints', function() {
+    it('should update list on PUT', function() {
+      const updateData = {
+        title: 'My New Title',
+        private: true,
+        user: userId
+      };
+      return List.findOne()
+        .then(function(list) {
+          let auth = `Bearer ${token}`;
+          updateData.id = list._id;
+          return chai.request(app)
+            .put(`/lists/${list._id}`)
+            .set('Authorization', auth)
+            .send(updateData);
+        })
+        .then(function(res) {
+          expect(res).to.have.status(201);
+
+          return List.findById(updateData.id);
+        })
+        .then(function(list) {
+          expect(list.title).to.equal(updateData.title);
+          expect(list.private).to.equal(updateData.private);
+        });
+    });
+
+    it('should update movie on PUT', function() {
+      const updateData = {
+        image: 'www.newimagelink.com/image.jpeg'
+      };
+      return Movie.findOne()
+        .then(function(movie) {
+          let auth = `Bearer ${token}`;
+          updateData.id = movie._id;
+          return chai.request(app)
+            .put(`/movies/${movie._id}`)
+            .set('Authorization', auth)
+            .send(updateData);
+        })
+        .then(function(res) {
+          expect(res).to.have.status(201);
+
+          return Movie.findById(updateData.id);
+        })
+        .then(function(movie) {
+          expect(movie.image).to.equal(updateData.image);
+        });
+    });
+
+    it('should update user on PUT', function() {
+      const updateData = {
+        id: userId,
+        moviesSeen: [],
+        lists: []
+      };
+      return Movie.find()
+        .limit(10)
+        .then(function(movies) {
+          movies.forEach(movie => updateData.moviesSeen.push(movie._id));
+          return List.findOne();
+        })
+        .then(function(list) {
+          updateData.lists.push(list._id);
+          let auth = `Bearer ${token}`;
+          return chai.request(app)
+            .put(`/users/${userId}`)
+            .set('Authorization', auth)
+            .send(updateData);
+        })
+        .then(function(res) {
+          expect(res).to.have.status(201);
+
+          return User.findById(userId);
+        })
+        .then(function(user) {
+          expect(user.moviesSeen).to.deep.equal(updateData.moviesSeen);
+          expect(user.lists).to.deep.equal(updateData.lists);
+        });
+    });
+  });
+
+  describe('DELETE endpoints', function() {
+    it('should delete movies on DELETE', function() {
+      let auth = `Bearer ${token}`;
+      let movieId;
+      return Movie.findOne()
+        .then(function(movie) {
+          movieId = movie._id;
+          return chai.request(app)
+            .delete(`/movies/${movieId}`)
+            .set('Authorization', auth);
+        })
+        .then(function(res) {
+          expect(res).to.have.status(204);
+          return Movie.findById(movieId);
+        })
+        .then(function(_movie) {
+          expect(_movie).to.be.null;
+        });
+    });
+
+    it('should delete lists on DELETE', function() {
+      let auth = `Bearer ${token}`;
+      let listId;
+      return List.findOne()
+        .then(function(list) {
+          listId = list._id;
+          return chai.request(app)
+            .delete(`/lists/${listId}`)
+            .set('Authorization', auth);
+        })
+        .then(function(res) {
+          expect(res).to.have.status(204);
+          return List.findById(listId);
+        })
+        .then(function(_list) {
+          expect(_list).to.be.null;
+        });
+    });
+
+    it('should delete lists on DELETE', function() {
+      let auth = `Bearer ${token}`;
+      let userId;
+      return User.findOne()
+        .then(function(user) {
+          userId = user._id;
+          return chai.request(app)
+            .delete(`/users/${userId}`)
+            .set('Authorization', auth);
+        })
+        .then(function(res) {
+          expect(res).to.have.status(204);
+
+          return User.findById(userId);
+        })
+        .then(function(_user) {
+          expect(_user).to.be.null;
+        });
+    });
+  });
 });
