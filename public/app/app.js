@@ -347,7 +347,7 @@ function handleLogout() {
 
 function logout() {
   user = false;
-  authToken = '';
+  localStorage.removeItem('jwt');
   clearPage();
 }
 
@@ -370,12 +370,13 @@ function clearPage() {
 
 function reloadLogin() {
   $('.intro').prop('hidden',false);
-  $('.intro').html('<p>Seen-O-Phile is an interactive application allowing users to view lists of the best movies ever made, add those lists to their accounts, and check off movies as they watch them. Start your cinematic journey today by logging in below!</p>');
+  $('.intro').html('<p>Seen It? is an interactive application allowing users to view lists of the best movies ever made, add those lists to their accounts, and check off movies as they watch them. Start your cinematic journey today by logging in below!</p>');
   $('.login').prop('hidden',false);
   $('.login-form').prop('hidden',false);
   $('.login-form fieldset').prop('hidden',false);
-  $('.sign-up-section').html('');
-  $('.sign-up-section').prop('hidden',true);
+  $('.sign-up-section').html(`<div>Don't have an account? Sign up below!</div>
+  <button class="sign-up">Sign Up</button>`);
+  $('.sign-up-section').prop('hidden',false);
 }
 
 function handleViewSeen() {
@@ -427,7 +428,7 @@ function handleViewProfile() {
 }
 
 function handleSignUp() {
-  $('.sign-up').click(function() {
+  $('.sign-up-section').on('click','.sign-up',function() {
     clearLogin();
     $('.sign-up-section').html('');
     const html = `<form class="sign-up-form">
