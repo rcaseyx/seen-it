@@ -41,7 +41,10 @@ function attemptLogin(username,password) {
 function login(user) {
   clearLogin();
   clearPage();
+  $('.links').css({opacity: 0});
+  $('.lists').css({opacity: 0});
   $('.lists').prop('hidden',false);
+  $('.lists').animate({opacity: 1}, 'slow');
   $('.your').html('');
   $('.all').html('');
   $('.title').html('');
@@ -56,6 +59,7 @@ function login(user) {
   getListData(user, displayListData);
   getAllLists();
   updateHeader();
+  $('.links').animate({opacity: 1}, 'slow');
 }
 
 function updateHeader() {
@@ -191,8 +195,6 @@ function updateUser(data) {
 function handleViewList() {
   $('.your').on('click', '.view', function() {
     const listId = $(this).closest('div').attr('id');
-    $('.lists').prop('hidden',true);
-    $('.list').prop('hidden',false);
 
     getList(listId);
 
@@ -218,6 +220,10 @@ function getList(listId) {
       "Authorization": `Bearer ${localStorage.getItem("jwt")}`
     },
     success: function(result) {
+      $('.lists').prop('hidden',true);
+      $('.list').css({opacity: 0});
+      $('.list').prop('hidden',false);
+      $('.list').animate({opacity: 1}, 'slow');
       generateListDetail(result);
     },
     error: function(error) {
@@ -267,14 +273,14 @@ function displayListDetail(title,data,seenData,listId,createdBy,createdByName) {
   }
   $('.detail').html('');
   data.forEach(function(movie) {
-    $('.detail').append(`<div class="movie" id="${movie._id}">${movie.title} <img src="${movie.image}" alt="${movie.title} poster"><button class="seen" id="${listId}">Seen It</button></div>`);
+    $('.detail').append(`<div class="movie" id="${movie._id}">${movie.title} <img src="${movie.image}" alt="${movie.title} poster"><button class="seen button" id="${listId}">Seen It</button></div>`);
   });
   $('.detailSeen').html('');
   seenData.forEach(function(movie) {
-    $('.detailSeen').append(`<div class="movie" id="${movie._id}"><del>${movie.title}</del> <img src="${movie.image}" alt="${movie.title} poster">You've seen it!</div>`);
+    $('.detailSeen').append(`<div class="movie" id="${movie._id}"><del>${movie.title}</del> <img src="${movie.image}" alt="${movie.title} poster"><span class="checked">You've seen it!</span></div>`);
   });
   if(createdBy === user.id) {
-    $('.title').append(`<button class="deleteList">Delete List</button>`);
+    $('.title').append(`<button class="deleteList button">Delete List</button>`);
   }
 }
 
@@ -282,9 +288,11 @@ function handleDeleteList() {
   $('.show').on('click','.deleteList',function() {
     let listId = $(this).closest('.show').find('.seen').attr('id');
     clearPage();
+    $('.detail').css({opacity: 0});
     $('.detail').prop('hidden', false);
+    $('.detail').animate({opacity: 1}, 'slow');
     $('.detail').html(`<div id="${listId}">Are you sure you want to delete this list? This action cannot be undone.
-                    <button class="confirmDelete">Delete List</button> <button class="cancelDelete">Cancel</button></div>`);
+                    <button class="confirmDelete button">Delete List</button> <button class="cancelDelete button">Cancel</button></div>`);
   });
 }
 
@@ -369,14 +377,16 @@ function clearPage() {
 }
 
 function reloadLogin() {
+  $('main').css({opacity: 0});
   $('.intro').prop('hidden',false);
   $('.intro').html('<p>Seen It? is an interactive application allowing users to view lists of the best movies ever made, add those lists to their accounts, and check off movies as they watch them. Start your cinematic journey today by logging in below!</p>');
   $('.login').prop('hidden',false);
   $('.login-form').prop('hidden',false);
   $('.login-form fieldset').prop('hidden',false);
   $('.sign-up-section').html(`<div>Don't have an account? Sign up below!</div>
-  <button class="sign-up">Sign Up</button>`);
+  <button class="sign-up button">Sign Up</button>`);
   $('.sign-up-section').prop('hidden',false);
+  $('main').animate({opacity: 1}, 'slow');
 }
 
 function handleViewSeen() {
@@ -384,6 +394,9 @@ function handleViewSeen() {
     clearPage();
     updateHeader();
     let html = generateSeenData(user);
+    $('.seenData').css({opacity: 0});
+    $('.seenData').prop('hidden', false);
+    $('.seenData').animate({opacity: 1}, 'slow');
     $('.seenData').html(html);
   });
 }
@@ -446,10 +459,12 @@ function handleSignUp() {
                       <label for="lastName">Last Name:
                         <input type="text" id="lastName">
                       </label>
-                      <input type="submit" class="submit-create-account">
+                      <input type="submit" class="submit-create-account button">
                     </fieldset>
                   </form>`;
 
+    $('.sign-up-section').css({opacity: 0});
+    $('.sign-up-section').animate({opacity: 1}, 'slow');
     $('.sign-up-section').html(html);
   });
 }
@@ -493,7 +508,10 @@ function createNewAccount(username, password, firstName, lastName) {
 function displayNewUser(data) {
   $('.sign-up-section').html('');
   const html = `<div>Congratulations! User "${data.username}" was created successfully!<div>
-                <button class="newLogin">Login</button>`;
+                <button class="newLogin button">Login</button>`;
+
+  $('.sign-up-section').css({opacity: 0});
+  $('.sign-up-section').animate({opacity: 1}, 'slow');
   $('.sign-up-section').html(html);
 }
 
@@ -522,7 +540,7 @@ function handleCreateList() {
                           <label for="listTitle">List Title:
                             <input type="text" id="listTitle" required>
                           </label>
-                          <label for="movieChoices">Movies to Add:
+                          <label for="movieChoices">Movies to Add (select multiple):
                             <select id="movieChoices" multiple>
                               ${generateAllMovies(movieArr)}
                             </select>
@@ -533,10 +551,12 @@ function handleCreateList() {
                             <label for="yesPublic" required>Yes<input type="radio" id="yesPublic" value="true"></label>
                             <label for="noPublic" required>No<input type="radio" id="noPublic" value="false"></label>
                           </div>
-                          <input type="submit" class="submit-create-list">
+                          <input type="submit" class="submit-create-list button">
                         </fieldset>
                       </form>`
         $('.createListForm').prop('hidden',false);
+        $('main').css({opacity: 0});
+        $('main').animate({opacity: 1}, 'slow');
         $('.createListForm').html(html);
       },
       error: function(error) {
