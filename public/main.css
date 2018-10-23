@@ -19,7 +19,7 @@ header {
   left: 0;
   background-color: #696969;
   color: #F5F5F5;
-  border-bottom: 1px solid #0E0B16;
+  border-bottom: 3px solid #76323f;
 }
 
 header h1 {
@@ -30,7 +30,8 @@ header h1 {
   transform: translate(-50%, -50%);
   font-size: 40px;
   display: block;
-  font-family: 'Shrikhand', cursive;
+  padding-left: 10px;
+  font-family: 'Bungee Shade', cursive;
   font-weight: bold;
 }
 
@@ -41,9 +42,10 @@ header h1 {
 }
 
 .login {
-  /* border: 1px solid #A9A9A9;
-  background-color: #A9A9A9; */
-  border-radius: 5px;
+  /*border: 3px solid #76323f;
+  background-color: #696969;
+  color: #F5F5F5;
+  border-radius: 5px;*/
   width: 50%;
   padding: 10px;
 }
@@ -75,9 +77,16 @@ header h1 {
   text-align: center;
 }
 
+input[type=text], input[type=password] {
+  border-radius: 5px;
+  text-align: center;
+  font-size: 14px;
+}
+
 .links a {
   text-decoration: none;
   color: #F5F5F5;
+  transition: .5s ease;
 }
 
 .links a:hover {
@@ -86,6 +95,14 @@ header h1 {
 
 .links ul {
   list-style-type: none;
+}
+
+.userProfile {
+  display: flex;
+}
+
+.lists {
+  opacity: 0;
 }
 
 .lists ul {
@@ -113,7 +130,7 @@ header h1 {
   border-radius: 5px;
 }
 
-.lists a {
+.lists a, .button {
   text-decoration: none;
   margin-top: 5px;
   margin-bottom: 5px;
@@ -123,15 +140,20 @@ header h1 {
   display: inline-block;
   background-color: white;
   color: black;
+  transition: .5s ease;
 }
 
 .lists a:visited {
   color: black;
 }
 
-.lists a:hover {
+.lists a:hover, .button:hover {
   background-color: #76323f;
   color: #F5F5F5;
+}
+
+.button {
+  cursor: pointer;
 }
 
 .links li {
@@ -240,6 +262,21 @@ select {
   margin-bottom: 5px;
 }
 
+.movie .button {
+  font-size: 14px;
+  margin-top: 1px;
+  margin-bottom: 1px;
+}
+
+.button {
+  font-size: 14px;
+}
+
+.checked {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
 .seen {
   width: 50%;
   height: auto;
@@ -295,11 +332,79 @@ select {
   .seenData div {
     flex-basis: 50%;
   }
+
+  .links {
+    font-size: 22px;
+  }
+
+  .lists {
+    flex-direction: column;
+  }
+
+  body {
+    font-size: 22px;
+  }
+
+  header h1 {
+    font-size: 30px;
+  }
+
+  .all li, .your li {
+    font-size: 32px;
+    width: 100%;
+  }
+
+  .movie {
+    flex-basis: 100%;
+  }
 }
 
 @media only screen and (min-width: 640px) and (max-width: 1024px) {
 
   .seenData div {
     flex-basis: 33.33%
+  }
+
+  .intro {
+    width: 90%;
+  }
+
+  .links li {
+    font-size: 25px;
+  }
+
+  .lists {
+    flex-direction: column;
+  }
+
+  input[type=text], input[type=password] {
+    width: 100%;
+    font-size: 32px;
+  }
+
+  input [type=radio] {
+    font-size: 30px;
+  }
+
+  select {
+    font-size: 32px;
+  }
+
+  .all li, .your li {
+    font-size: 32px;
+    width: 100%;
+  }
+
+  .button {
+    font-size: 32px;
+    width: 50%;
+  }
+
+  body {
+    font-size: 32px;
+  }
+
+  .movie {
+    flex-basis: 100%;
   }
 }
