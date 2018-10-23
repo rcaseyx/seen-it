@@ -154,6 +154,26 @@ router.delete('/:id', jwtAuth, (req, res) => {
     .catch(err => res.status(500).json({ message: "Internal server error" }));
 });
 
+
+//I know it's not recommended to have a GET endpoint for users, but this was
+//the only way I could see to solve a bug with deleting a list and removing it
+//from each user's lists array. It's locked down with jwt and I don't store
+//private information, so I don't think it is a huge issue. 
+
+
+router.get('/', jwtAuth, (req,res) => {
+  User.find()
+    .then(users => {
+      res.json({
+        users: users.map(user => user.serialize())
+      })
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ error: 'Internal Server error' });
+    });
+});
+
 router.get('/:id', jwtAuth, (req, res) => {
   User.findById(req.params.id)
     .then(user => res.json(user.serialize()))
