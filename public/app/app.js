@@ -255,6 +255,7 @@ function displayListDetail(title,data,seenData,listId,createdBy,createdByName) {
   $('.title').prop('hidden',false);
   $('.detail').prop('hidden',false);
   $('.detailSeen').prop('hidden',false);
+  $('.title').attr('id',`${listId}`);
   $('.title').html('');
   if(!(createdBy === user.id)) {
     $('.title').append(`<div class="titleAndAuthor">
@@ -270,7 +271,7 @@ function displayListDetail(title,data,seenData,listId,createdBy,createdByName) {
   }
   $('.detail').html('');
   data.forEach(function(movie) {
-    $('.detail').append(`<div class="movie" id="${movie._id}">${movie.title} <img src="${movie.image}" alt="${movie.title} poster"><button class="seen button" id="${listId}">Seen It</button></div>`);
+    $('.detail').append(`<div class="movie" id="${movie._id}">${movie.title} <img src="${movie.image}" alt="${movie.title} poster"><button class="seen button">Seen It</button></div>`);
   });
   $('.detailSeen').html('');
   seenData.forEach(function(movie) {
@@ -283,7 +284,7 @@ function displayListDetail(title,data,seenData,listId,createdBy,createdByName) {
 
 function handleDeleteList() {
   $('.show').on('click','.deleteList',function() {
-    let listId = $(this).closest('.show').find('.seen').attr('id');
+    let listId = $(this).closest('.show').find('.title').attr('id');
     clearPage();
     $('.detail').css({opacity: 0});
     $('.detail').prop('hidden', false);
@@ -307,13 +308,66 @@ function handleConfirmDeleteList() {
         let index = user.lists.indexOf(listId);
         user.lists.splice(index,1);
         updateUser(user);
-        login(user);
+        getAllUsers(listId);
       },
       error: function(error) {
         console.error(error);
       }
     });
   });
+}
+
+function getAllUsers(list) {
+  $.ajax({
+    type: 'GET',
+    contentType: 'application/json',
+    url: '/users',
+    headers: {
+      "Authorization": `Bearer ${localStorage.getItem("jwt")}`
+    },
+    success: function(result) {
+      let completedReqs = 0;
+      let usersCount = 0;
+      let hasListCount = 0;
+      let usersLength = result.users.length;
+      result.users.forEach(function(_user) {
+        let updatedUser = _user;
+        let userLists = updatedUser.lists;
+        let index = userLists.indexOf(list);
+        usersCount ++;
+        if(index > -1) {
+          hasListCount ++;
+          updatedUser.lists.splice(index,1);
+          $.ajax({
+          type: 'PUT',
+          data: JSON.stringify(updatedUser),
+          contentType: 'application/json',
+          url: `/users/${updatedUser.id}`,
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("jwt")}`
+          },
+          success: function(result) {
+            completedReqs ++;
+            if(completedReqs === hasListCount && usersLength === usersCount) {
+              login(user);
+            }
+          },
+          error: function(error) {
+            console.error(error);
+          }
+          });
+        }
+        else {
+          if(completedReqs === hasListCount && usersLength === usersCount) {
+            login(user);
+          }
+        }  
+      });
+    },
+    error: function(error) {
+      console.error(error);
+    }
+  })
 }
 
 function handleCancelDeleteList() {
