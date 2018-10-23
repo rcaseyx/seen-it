@@ -1,6 +1,5 @@
 "use strict";
 let user;
-//let authToken;
 
 function handleLogin() {
   $('.login-form').submit(function(e) {
@@ -31,9 +30,8 @@ function attemptLogin(username,password) {
       login(user);
     },
     error: function(error) {
-      console.log(error);
-      //$('.message').html(error.responseJSON.message);
-      // need to come back and figure out login errors
+      console.error(error);
+      $('.message').html('Username or password not recognized.');
     }
   });
 }
@@ -93,7 +91,7 @@ function getListData(user, callback) {
           }
         },
         error: function(error) {
-          console.log(error);
+          console.error(error);
         }
       });
     });
@@ -145,7 +143,7 @@ function getAllLists() {
       displayAllLists(allLists);
     },
     error: function(error) {
-      console.log(error);
+      console.error(error);
     }
   });
 }
@@ -184,10 +182,9 @@ function updateUser(data) {
     },
     success: function(result) {
       user = result;
-      console.log('Updated user');
     },
     error: function(error) {
-      console.log(error);
+      console.error(error);
     }
   });
 }
@@ -227,7 +224,7 @@ function getList(listId) {
       generateListDetail(result);
     },
     error: function(error) {
-      console.log(error);
+      console.error(error);
     }
   });
 }
@@ -313,7 +310,7 @@ function handleConfirmDeleteList() {
         login(user);
       },
       error: function(error) {
-        console.log(error);
+        console.error(error);
       }
     });
   });
@@ -422,7 +419,7 @@ function generateSeenData(user) {
         }
       },
       error: function(error) {
-        console.log(error);
+        console.error(error);
       }
     });
   });
@@ -560,7 +557,7 @@ function handleCreateList() {
         $('.createListForm').html(html);
       },
       error: function(error) {
-        console.log(error);
+        console.error(error);
       }
     });
   });
@@ -602,7 +599,7 @@ function handleSubmitNewList() {
         getList(result.id);
       },
       error: function(error) {
-        console.log(error);
+        console.error(error);
       }
     });
   });
