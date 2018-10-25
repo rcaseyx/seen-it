@@ -618,7 +618,8 @@ function handleCreateList() {
 }
 
 function handleSubmitNewList() {
-  $('.createListForm').on('click','.submit-create-list',function() {
+  $('.createListForm').on('click','.submit-create-list',function(e) {
+    e.preventDefault();
     let listTitle = $(this).closest('form').find('#listTitle').val();
     let movies = $(this).closest('form').find('#movieChoices').val();
     let isPrivate;
