@@ -321,25 +321,6 @@ describe('Seen-O-Phile', function() {
   });
 
   describe('DELETE endpoints', function() {
-    it('should delete movies on DELETE', function() {
-      let auth = `Bearer ${token}`;
-      let movieId;
-      return Movie.findOne()
-        .then(function(movie) {
-          movieId = movie._id;
-          return chai.request(app)
-            .delete(`/movies/${movieId}`)
-            .set('Authorization', auth);
-        })
-        .then(function(res) {
-          expect(res).to.have.status(204);
-          return Movie.findById(movieId);
-        })
-        .then(function(_movie) {
-          expect(_movie).to.be.null;
-        });
-    });
-
     it('should delete lists on DELETE', function() {
       let auth = `Bearer ${token}`;
       let listId;
@@ -359,7 +340,7 @@ describe('Seen-O-Phile', function() {
         });
     });
 
-    it('should delete lists on DELETE', function() {
+    it('should delete user on DELETE', function() {
       let auth = `Bearer ${token}`;
       let userId;
       return User.findOne()
