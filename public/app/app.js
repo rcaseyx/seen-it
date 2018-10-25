@@ -361,7 +361,7 @@ function getAllUsers(list) {
           if(completedReqs === hasListCount && usersLength === usersCount) {
             login(user);
           }
-        }  
+        }
       });
     },
     error: function(error) {
@@ -381,7 +381,7 @@ function handleCancelDeleteList() {
 
 function handleSeenIt() {
   $('.detail').on('click','.seen',function() {
-    let listId = $(this).attr('id');
+    let listId = $(this).closest('.show').find('.title').attr('id');
     let movieId = $(this).closest('div').attr('id');
     user.moviesSeen.push(movieId);
     updateUser(user);
